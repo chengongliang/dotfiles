@@ -1,0 +1,39 @@
+[manager]
+ratio = [1, 4, 4]
+show_symlink = true
+sort_by = "natural"
+sort_reverse = false
+linemode = "size"
+
+[preview]
+tab_size = 2
+max_width = 600
+max_height = 900
+
+[opener]
+edit = [
+  { run = 'nvim "$@"', block = true, desc = "Neovim" },
+]
+open = [
+  { run = 'xdg-open "$@"', desc = "System default" },
+]
+reveal = [
+  { run = 'nautilus --select "$@"', desc = "Nautilus" },
+]
+
+[open]
+rules = [
+  # 所有文本类型文件 → Neovim
+  { mime = "text/*", use = "edit" },
+  # 空文件 → Neovim
+  { mime = "inode/x-empty", use = "edit" },
+  # JSON 等特定应用类型 → Neovim
+  { mime = "application/json", use = "edit" },
+  { mime = "application/x-yaml", use = "edit" },
+  { mime = "application/toml", use = "edit" },
+  { mime = "application/x-www-form-urlencoded", use = "edit" },
+  # Shell 脚本 → Neovim
+  { mime = "text/x-shellscript", use = "edit" },
+  # 其他一切 → 系统默认
+  { mime = "*", use = "open" },
+]

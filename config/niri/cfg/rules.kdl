@@ -1,0 +1,261 @@
+    /* Apps: blur them all without xray for a better look */
+    window-rule {
+      background-effect {
+        blur true
+        xray false
+      }
+    }
+
+    /* Noctalia: blur everywhere without xray for a better look */
+    layer-rule {
+      match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
+      background-effect {
+	blur true
+        xray false
+      }
+    }
+
+    window-rule {
+        match app-id="Loupe"
+
+        popups {
+            // Matches the default libadwaita pop-up corner radius.
+            geometry-corner-radius 15
+
+            // Note: it'll look better to set background opacity
+            // through your GTK theme CSS and not here.
+            // This is just an example that makes it look obvious.
+            opacity 0.5
+
+            background-effect {
+                blur true
+            }
+        }
+    }
+
+    // Enable blur behind the Alacritty terminal.
+    window-rule {
+        match app-id="(alacritty|kitty|ghostty|nautilus|spotify)"
+
+        background-effect {
+            blur true
+        }
+    }
+
+    // Enable blur behind the fuzzel launcher.
+    layer-rule {
+        match namespace="^launcher$"
+
+        background-effect {
+            blur true
+        }
+    }
+
+    window-rule {
+        geometry-corner-radius 20 // Set every window radius to 20
+        clip-to-geometry true
+        // 对，niri绘制s
+        draw-border-with-background false
+        // 新窗口默认不最大化
+        open-maximized false
+        // 新窗口默认平铺，而非浮动
+        //open-floating false
+
+        // 全局默认宽度设置为屏幕宽度的 80%
+        default-column-width { proportion 0.8; }
+        default-window-height {
+        	proportion 1.0;
+        }
+    }
+
+    // if you use steam you will probably like these
+    window-rule {
+        match app-id="steam"
+        exclude title=r#"^[Ss]team$"#
+        open-floating true
+    }
+
+    window-rule {
+       match app-id="steam" title=r#"^notificationtoasts_\d+_desktop$"#
+       default-floating-position x=10 y=10 relative-to="bottom-right"
+       open-focused false
+    }
+
+    layer-rule {
+        match namespace="^noctalia-wallpaper*"
+        place-within-backdrop true
+    }
+
+
+    // 疯狂的悬浮匹配
+    window-rule {
+    	match app-id="(kitty|blueberry|guifetch|pavucontrol|pulseaudio|nm-connection-editor|plasma|kcm_|bluedevilwizard|Welcome|illogical-impulse|Zotero|fuzzel)"
+    	open-floating true
+    }
+    // 宽度1.0
+    // window-rule {
+    // 	match app-id="(zen)"
+    // 	default-column-width {
+    // 		proportion 1.0
+    // 	}
+    // }
+    // 宽度0.8
+    window-rule {
+    	match app-id="(ghostty)"
+        exclude title="ghostty-dropdown"
+    	default-column-width {
+    		proportion 0.5
+    	}
+    }
+
+    // Dropdown terminal 改用 kitty quick-access-terminal（layer-shell 面板），见 keybinds.kdl 的 Mod+Grave
+    // 旧的 ghostty-dropdown window-rule 已移除
+
+    // 宽度0.6
+    window-rule {
+    	match app-id="^(systemsettings|systemsettings)$"
+    	default-column-width {
+    		proportion 0.6
+    	}
+    }
+    //宽度0.5
+    window-rule {
+        match app-id="(cc-switch|goland|rustover|clion|CLion|sparkle|kitty|foot|Alacritty)"
+
+        default-column-width {
+    		proportion 0.5;
+    	}
+    }
+    // 宽度0.3
+    window-rule {
+     	match app-id="karing"
+        default-column-width {
+        	proportion 0.3
+        }
+    }
+    //高度0.8
+    window-rule {
+        match app-id="(kitty)"
+        default-window-height {
+    		proportion 0.8;
+    	}
+    }
+    //高度0.5
+    window-rule {
+        match app-id="(goland|rustover|clion|CLion|sparkle|kitty|foot|Alacritty)"
+
+        // Half of the screen high.
+        default-window-height {
+    		proportion 0.5;
+    	}
+    }
+    // 微软浏览器
+    window-rule {
+      match app-id="microsoft-edge" title=r#"^$"#
+      open-floating true
+    }
+    // vscode悬浮窗专享
+    window-rule {
+        match app-id="code" title="^Visual Studio Code$"
+        open-floating true
+    }
+    // QQ专享
+    window-rule {
+        match app-id="QQ" title="^QQ$"
+        default-column-width {
+            proportion 0.2;
+        }
+    }
+    window-rule {
+        match app-id="QQ"
+        exclude title="^QQ$"
+        default-column-width {
+            proportion 0.8;
+        }
+    }
+    // telegram专享
+    window-rule {
+      match app-id="org.telegram.desktop" title="Media viewer"
+      open-floating true
+        default-window-height {
+                    proportion 0.5;
+            }
+        // 80% of the screen wide.
+        default-column-width {
+            proportion 0.5;
+        }
+    }
+    window-rule {
+      match app-id="org.telegram.desktop"
+      exclude title="Telegram"
+      open-floating true
+        default-window-height {
+                    proportion 0.75;
+            }
+        // 80% of the screen wide.
+        default-column-width {
+                    proportion 0.75;
+            }
+    }
+    window-rule {
+    	match title="^[Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture.*$"
+    	open-floating true
+    	default-column-width {
+    		fixed 400
+    	}
+    }
+
+    // EasyConnect: 固定平铺尺寸 817x580
+    window-rule {
+    	match app-id="EasyConnect"
+    	default-column-width {
+    		fixed 800
+    	}
+    	default-window-height {
+    		fixed 500
+    	}
+    }
+
+    // 钉钉: 固定浮动尺寸
+    window-rule {
+    	match app-id="dingtalk"
+        open-floating true
+    	default-column-width {
+    		fixed 1280
+    	}
+    	default-window-height {
+    		fixed 900
+    	}
+    }
+
+    // 微信: 固定浮动尺寸
+    window-rule {
+    	match app-id="wechat"
+        open-floating true
+    	default-column-width {
+    		fixed 1280
+    	}
+    	default-window-height {
+    		fixed 900
+    	}
+    }
+
+    window-rule {
+        match app-id="alacritty|firefox|wezterm|thunar|brave"
+        default-column-width { proportion 0.5; }
+    }
+    // Zen: Bitwarden 密码管理器弹窗
+    window-rule {
+        match app-id="zen" title=r#".*[Bb]itwarden.*"#
+        default-column-width { proportion 0.3; }
+        max-width 500
+    }
+    window-rule {
+        match app-id="zen"
+        exclude title=r#".*[Bb]itwarden.*"#
+        default-column-width { proportion 1.0; }
+    }
+    window-rule {
+        match app-id="ghostty"
+        default-column-width { proportion 0.8; }
+    }

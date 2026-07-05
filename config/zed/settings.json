@@ -1,0 +1,67 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "collaboration_panel": {
+    "button": false
+  },
+  "agent": {
+    "sidebar_side": "right",
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "icon_theme": "Catppuccin Macchiato",
+  "cli_default_open_behavior": "existing_window",
+  "project_panel": {
+    "dock": "left"
+  },
+  "agent_servers": {
+    "codebuddy-code": {
+      "type": "registry"
+    },
+    "codex-acp": {
+      "default_config_options": {
+        "mode": "full-access"
+      },
+      "type": "registry"
+    },
+    "kilo": {
+      "type": "registry"
+    },
+    "claude-acp": {
+      "default_config_options": {
+        "model": "opus",
+        "mode": "bypassPermissions"
+      },
+      "type": "registry"
+    },
+    "pi-acp": {
+      "type": "registry"
+    }
+  },
+  "terminal": {
+    "dock": "bottom",
+    "shell": "system"
+  },
+  "proxy": "",
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Catppuccin Macchiato",
+  },
+}
