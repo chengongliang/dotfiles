@@ -52,7 +52,7 @@
     }
 
     window-rule {
-        geometry-corner-radius 20 // Set every window radius to 20
+        geometry-corner-radius 15 // Set every window radius to 15
         clip-to-geometry true
         // 对，niri绘制s
         draw-border-with-background false

@@ -27,7 +27,7 @@
     },
     "codex-acp": {
       "default_config_options": {
-        "mode": "full-access"
+        "mode": "agent-full-access"
       },
       "type": "registry"
     },
