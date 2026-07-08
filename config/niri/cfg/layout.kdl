@@ -1,8 +1,13 @@
     layout {
-        gaps 10 // Gap between windows
+        gaps 8 // Gap between windows
         center-focused-column "never" // Don’t auto-center focused column
 
         background-color "transparent" // <- needed for noctalia-shell to set wallpaper
+
+        // 聚焦窗口边框宽度（默认 4，调成 2 更细）
+        focus-ring {
+            width 2
+        }
 
         preset-column-widths {
             proportion 0.33333
