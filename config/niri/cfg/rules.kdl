@@ -99,21 +99,12 @@
     // 		proportion 1.0
     // 	}
     // }
-    // 宽度0.8
-    window-rule {
-    	match app-id="(ghostty)"
-        exclude title="ghostty-dropdown"
-    	default-column-width {
-    		proportion 0.5
-    	}
-    }
-
     // Dropdown terminal 改用 kitty quick-access-terminal（layer-shell 面板），见 keybinds.kdl 的 Mod+Grave
-    // 旧的 ghostty-dropdown window-rule 已移除
+    // ghostty 默认宽度见文末 0.8 规则（覆盖全局 0.8 同值，保留显式声明）
 
     // 宽度0.6
     window-rule {
-    	match app-id="^(systemsettings|systemsettings)$"
+    	match app-id="systemsettings"
     	default-column-width {
     		proportion 0.6
     	}
@@ -133,14 +124,7 @@
         	proportion 0.3
         }
     }
-    //高度0.8
-    window-rule {
-        match app-id="(kitty)"
-        default-window-height {
-    		proportion 0.8;
-    	}
-    }
-    //高度0.5
+    //高度0.5（含 kitty；原先单独 0.8 已被本规则覆盖，已删除）
     window-rule {
         match app-id="(goland|rustover|clion|CLion|sparkle|kitty|foot|Alacritty)"
 
@@ -240,8 +224,9 @@
     	}
     }
 
+    // alacritty 宽度已在上方 0.5 组；此处仅保留其余应用
     window-rule {
-        match app-id="alacritty|firefox|wezterm|thunar|brave"
+        match app-id="(firefox|wezterm|thunar|brave)"
         default-column-width { proportion 0.5; }
     }
     // Zen: Bitwarden 密码管理器弹窗
@@ -255,6 +240,7 @@
         exclude title=r#".*[Bb]itwarden.*"#
         default-column-width { proportion 1.0; }
     }
+    // ghostty 宽度 0.8（此前另有 0.5 规则已被本条覆盖，已删除）
     window-rule {
         match app-id="ghostty"
         default-column-width { proportion 0.8; }
