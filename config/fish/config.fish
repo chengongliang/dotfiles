@@ -55,9 +55,12 @@ function fzum -d "View all unmerged commits across all local branches"
 end
 
 # ─── alias: eza ───
-alias ls 'eza --icons'
-alias ll 'eza -l --icons'
-alias lt 'eza --tree --icons'
+# eza 新版本 --icons 需要显式取值 (always/auto/never)，不能裸写 --icons
+# 覆盖 CachyOS 默认别名，避免路径被误当成 --icons 的参数
+alias ls 'eza -al --color=always --group-directories-first --icons=auto'
+alias la 'eza -a --color=always --group-directories-first --icons=auto'
+alias ll 'eza -l --color=always --group-directories-first --icons=auto'
+alias lt 'eza -aT --color=always --group-directories-first --icons=auto'
 
 # Docker
 set -gx DOCKER_HOST "unix://$XDG_RUNTIME_DIR/docker.sock"

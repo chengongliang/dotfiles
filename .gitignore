@@ -29,3 +29,6 @@ config/fish/conf.d/local.fish
 backup/
 lazy-lock.json
 config/micro/backups/
+
+# Host-specific niri display layout (outputs/positions vary by machine)
+config/niri/cfg/display.kdl
