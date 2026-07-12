@@ -38,6 +38,9 @@ PACKAGES=(
     # Tmux
     tmux
 
+    # Herdr (agent multiplexer, AUR)
+    herdr
+
     # System / tools
     btop
     fastfetch

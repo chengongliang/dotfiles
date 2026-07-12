@@ -1,0 +1,69 @@
+# Herdr 配置 —— 终端里的 agent 多路复用器
+# 文档：https://herdr.dev/docs/configuration/
+# 打印完整默认配置：herdr --default-config
+# 改完热重载：herdr server reload-config
+#
+# 注意：~/.config/herdr 经 stow 软链回本仓库，herdr 的日志与 session 状态
+#       会写在同一目录，已在仓库 .gitignore 中排除，勿提交。
+
+# ── 主题 ──────────────────────────────────────────────
+# 跟随系统明暗切换，与 Zed 的 Catppuccin Latte / Mocha 对齐
+[theme]
+name = "catppuccin"                 # 深色基准（Mocha 系）
+auto_switch = true                  # 跟随终端上报的明暗变化自动切换
+light_name = "catppuccin-latte"
+dark_name = "catppuccin"
+
+# ── 终端 ──────────────────────────────────────────────
+[terminal]
+default_shell = "fish"              # 新面板使用 fish
+new_cwd = "follow"                  # 新面板继承来源面板/工作区的目录
+
+# ── Git worktree ─────────────────────────────────────
+# 侧边栏「New worktree」创建的检出根目录，checkout 落在 <目录>/<repo>/<分支>
+[worktrees]
+directory = "~/.herdr/worktrees"
+
+# ── 更新 ──────────────────────────────────────────────
+# 二进制由 paru(AUR) 管理，关闭后台版本检查，避免与包管理器抢更新
+[update]
+version_check = false
+
+# ── 键位 ──────────────────────────────────────────────
+# 保留 tmux 风格 prefix（ctrl+b，与本机 tmux 一致），在高频操作上再叠加
+# ctrl+alt 直连键（免 prefix）。ctrl+alt 家族在终端/OS 里几乎不冲突，但要
+# 避开 niri 已占用的 ctrl+alt+w(微信) 与 ctrl+alt+d(钉钉)——下面均未使用。
+[keys]
+prefix = "ctrl+b"
+
+# 面板间移动（最高频，直连免 prefix；vi 方向键，与 tmux 一致）
+focus_pane_left  = ["prefix+h", "ctrl+alt+h"]
+focus_pane_down  = ["prefix+j", "ctrl+alt+j"]
+focus_pane_up    = ["prefix+k", "ctrl+alt+k"]
+focus_pane_right = ["prefix+l", "ctrl+alt+l"]
+
+# 放大当前面板（把某个 agent 全屏）/ 新建标签页
+zoom    = ["prefix+z", "ctrl+alt+z"]
+new_tab = ["prefix+c", "ctrl+alt+c"]
+
+# 自定义命令：prefix+alt+g 临时开一个面板跑 lazygit，退出即关
+[[keys.command]]
+key = "prefix+alt+g"
+type = "pane"
+command = "lazygit"
+description = "lazygit"
+
+# ── 界面 / 侧边栏 ─────────────────────────────────────
+[ui]
+agent_panel_sort = "priority"               # 按注意力排序：blocked→done→working→idle
+show_agent_labels_on_pane_borders = true    # 无手动标签时在面板边框显示 agent 名
+
+# 桌面通知：agent 完成或需要输入时弹系统通知
+# Linux 走 notify-send，路由到 noctalia 通知中心（需 WAYLAND_DISPLAY，已具备）
+[ui.toast]
+delivery = "system"
+delay_seconds = 1
+
+# 提示音默认开启；若在共享/远程机器上嫌吵，改为 false
+[ui.sound]
+enabled = true
