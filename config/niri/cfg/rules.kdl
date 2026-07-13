@@ -111,7 +111,7 @@
     }
     //宽度0.5
     window-rule {
-        match app-id="(cc-switch|goland|rustover|clion|CLion|sparkle|kitty|foot|Alacritty)"
+        match app-id="(cc-switch|goland|rustover|google-chrome|clion|CLion|sparkle|kitty|foot|Alacritty)"
 
         default-column-width {
     		proportion 0.5;
