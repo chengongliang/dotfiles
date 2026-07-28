@@ -62,6 +62,17 @@ alias la 'eza -a --color=always --group-directories-first --icons=auto'
 alias ll 'eza -l --color=always --group-directories-first --icons=auto'
 alias lt 'eza -aT --color=always --group-directories-first --icons=auto'
 
+# Kill dingtalk
+function kill_dingtalk --description "Kill DingTalk processes"
+    # DingTalk 主进程 (nw/CEF) 会忽略 SIGTERM，必须用 SIGKILL(-9) 才能彻底退出
+    # 用 /opt/dingtalk 路径匹配，避免误杀其它命令行里碰巧含 "dingtalk" 字样的进程
+    if pkill -9 -u (id -u) -f '/opt/dingtalk'
+        echo "✓ DingTalk processes killed"
+    else
+        echo "⚠ 没有找到正在运行的 DingTalk 进程"
+    end
+end
+
 # Docker
 set -gx DOCKER_HOST "unix://$XDG_RUNTIME_DIR/docker.sock"
 
