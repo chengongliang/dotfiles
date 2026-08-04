@@ -24,6 +24,7 @@ home/.kube/
 
 # Generated / cache
 fish_variables
+*.bak
 config/fish/conf.d/local.fish
 *.back
 backup/
