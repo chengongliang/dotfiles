@@ -17,3 +17,5 @@ async-backend = epoll
 keybind = alt+shift+minus=new_split:down
 keybind = alt+shift+equal=new_split:right
 keybind = alt+w=close_surface
+
+custom-shader = ~/.config/ghostty/shaders/shader.glsl
