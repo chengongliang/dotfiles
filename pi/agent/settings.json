@@ -1,0 +1,44 @@
+{
+  "defaultProvider": "Nas",
+  "defaultModel": "glm-5.2",
+  "lastChangelogVersion": "0.83.0",
+  "providerCompat": {
+    "claudeCodeHeaders": {
+      "User-Agent": "claude-cli/2.1.92 (external, cli)",
+      "X-App": "cli",
+      "X-Stainless-Lang": "js",
+      "X-Stainless-Package-Version": "0.70.0",
+      "X-Stainless-OS": "Linux",
+      "X-Stainless-Arch": "arm64",
+      "X-Stainless-Runtime": "node",
+      "X-Stainless-Runtime-Version": "v24.13.0",
+      "X-Stainless-Retry-Count": "0",
+      "X-Stainless-Timeout": "600",
+      "Anthropic-Version": "2023-06-01",
+      "Anthropic-Dangerous-Direct-Browser-Access": "true",
+      "Anthropic-Beta": "claude-code-20250219,oauth-2025-04-20,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14"
+    },
+    "codexHeaders": {
+      "User-Agent": "codex_cli_rs/0.139.0",
+      "Originator": "codex_cli_rs",
+      "OpenAI-Beta": "responses=experimental",
+      "Version": "0.139.0",
+      "X-Codex-Beta-Features": "remote_compaction_v2"
+    },
+    "claudeCodeCompat": {
+      "metadataUserId": "{\"device_id\":\"8542caf80168364b784***45d601ac9d522f8f\",\"account_uuid\":\"\",\"session_id\":\"4b4***c3583\"}"
+    }
+  },
+  "packages": [
+    "git:github.com/MasuRii/pi-image-tools",
+    "git:github.com/MasuRii/pi-rtk-optimizer",
+    "npm:@gotgenes/pi-subagents",
+    "npm:pi-rounded-tools",
+    "npm:@firstpick/pi-themes-bundle",
+    "npm:pi-open-tui",
+    "npm:pi-mcp-adapter"
+  ],
+  "extensions": [
+  ],
+  "theme": "dark"
+}
