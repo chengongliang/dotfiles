@@ -1,0 +1,12 @@
+{
+  "name": "pi-extensions",
+  "private": true,
+  "dependencies": {
+    "@firstpick/pi-themes-bundle": "^0.1.5",
+    "@gotgenes/pi-subagents": "^19.2.1",
+    "pi-image-tools": "^1.1.0",
+    "pi-mcp-adapter": "^2.20.1",
+    "pi-open-tui": "^0.2.10",
+    "pi-rounded-tools": "^0.1.2"
+  }
+}
