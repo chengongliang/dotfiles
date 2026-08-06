@@ -130,6 +130,12 @@ for app in $(find config -maxdepth 1 -mindepth 1 -type d -printf '%f\n'); do
 done
 stow -t "$HOME/.config" config
 
+echo -e "${CYAN}Deploying pi config (~/.pi/)...${NC}"
+# pi 的 agent 目录含大量运行时文件（sessions/backup/skills/npm 等），
+# 必须用 --no-folding 逐文件链接，避免把整个目录折叠成符号链接覆盖运行时内容。
+mkdir -p "$HOME/.pi/agent/extensions"
+stow --no-folding -t "$HOME/.pi" pi
+
 # --- 8. Install Tmux plugins via TPM ---
 if command -v tmux &>/dev/null && [ -f "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
     echo -e "${CYAN}Installing Tmux plugins via TPM...${NC}"
@@ -156,4 +162,4 @@ echo "  3. GPG keys:         gpg --import or gpg --gen-key"
 echo "  4. Kube config:      place ~/.kube/config"
 echo ""
 echo -e "${CYAN}To undo symlinks:${NC}"
-echo "  cd ~/dotfiles && stow --delete -t ~ home && stow --delete -t ~/.config config"
+echo "  cd ~/dotfiles && stow --delete -t ~ home && stow --delete -t ~/.config config && stow --delete -t ~/.pi pi"

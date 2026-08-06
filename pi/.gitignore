@@ -1,0 +1,34 @@
+# models.json 由用户本地维护（含私有模型/端点），不入库
+agent/models.json
+
+# 主机专属的受信目录列表（路径随机器变化）
+agent/trust.json
+
+# 认证凭据（token 等）
+agent/auth.json
+
+# 运行时缓存
+agent/mcp-cache.json
+
+# 会话历史与备份
+agent/sessions/
+agent/backup/
+
+# git 凭据缓存
+agent/git/
+
+# skills 目录：运行时由 pi 生成符号链接，指向 ~/.agents/skills/
+agent/skills/
+
+# npm 依赖产物与锁文件（package.json 纳管，其余忽略）
+agent/npm/node_modules/
+agent/npm/package-lock.json
+
+# extensions 下由 npm 安装的扩展源码（git/github.com/...）只保留用户编写的 *.ts 与各扩展 config.json
+agent/extensions/**/index.ts
+agent/extensions/**/package.json
+agent/extensions/**/package-lock.json
+agent/extensions/**/tsconfig.json
+agent/extensions/**/CHANGELOG.md
+agent/extensions/**/LICENSE
+agent/extensions/**/README.md
