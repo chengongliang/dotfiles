@@ -6,6 +6,7 @@
   },
   "footerSegments": {
     "cwd": true,
+    "sessionName": false,
     "gitBranch": true,
     "gitStatus": true,
     "gitCommit": false,

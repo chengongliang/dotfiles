@@ -2,7 +2,7 @@
   "defaultProvider": "NewAPI",
   "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "max",
-  "lastChangelogVersion": "0.84.0",
+  "lastChangelogVersion": "0.84.1",
   "providerCompat": {
     "claudeCodeHeaders": {
       "User-Agent": "claude-cli/2.1.92 (external, cli)",
