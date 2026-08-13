@@ -250,3 +250,8 @@
         match app-id="codex"
         default-column-width { proportion 1.0; }
     }
+    // Orca: 服务启动时默认 100% 窗口宽度
+    window-rule {
+        match app-id="orca"
+        default-column-width { proportion 1.0; }
+    }
