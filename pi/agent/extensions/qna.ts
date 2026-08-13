@@ -9,7 +9,7 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { complete, type UserMessage } from "@earendil-works/pi-ai/compat";
 import { BorderedLoader } from "@earendil-works/pi-coding-agent";
-import { Key, matchesKey } from "@earendil-works/pi-tui";
+import { Key, matchesKey, truncateToWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
 
 interface QItem {
   question: string;
@@ -154,18 +154,21 @@ async function runQna(ctx: ExtensionContext, lastText: string): Promise<void> {
           const lines: string[] = [];
 
           lines.push(theme.fg("accent", "─".repeat(rw)));
-          lines.push(theme.bold(theme.fg("text", item.question)));
+          // 问题文本可能很长（还带 ANSI 样式），逐行包裹，绝不能让单行超出终端宽度
+          for (const wrapped of wrapTextWithAnsi(theme.bold(theme.fg("text", item.question)), rw)) {
+            lines.push(wrapped);
+          }
           lines.push("");
 
           for (let i = 0; i < item.options.length; i++) {
             const selected = i === index;
             const prefix = selected ? theme.fg("accent", "> ") : "  ";
             const label = `${i + 1}. ${item.options[i]!}`;
-            lines.push(prefix + theme.fg(selected ? "accent" : "text", label));
+            lines.push(prefix + theme.fg(selected ? "accent" : "text", truncateToWidth(label, Math.max(1, rw - 2))));
           }
 
           lines.push("");
-          lines.push(theme.fg("dim", "↑↓ 导航 • Enter 选择 • Esc 跳过"));
+          lines.push(theme.fg("dim", truncateToWidth("↑↓ 导航 • Enter 选择 • Esc 跳过", rw)));
           lines.push(theme.fg("accent", "─".repeat(rw)));
 
           return lines;
