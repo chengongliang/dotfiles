@@ -1,3 +1,4 @@
+onboarding = false
 # Herdr 配置 —— 终端里的 agent 多路复用器
 # 文档：https://herdr.dev/docs/configuration/
 # 打印完整默认配置：herdr --default-config
