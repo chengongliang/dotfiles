@@ -1,7 +1,7 @@
 {
-  "defaultProvider": "Nas",
-  "defaultModel": "glm-5.2",
-  "lastChangelogVersion": "0.83.0",
+  "defaultProvider": "NewAPI",
+  "defaultModel": "deepseek-v4-flash",
+  "lastChangelogVersion": "0.84.2",
   "providerCompat": {
     "claudeCodeHeaders": {
       "User-Agent": "claude-cli/2.1.92 (external, cli)",
@@ -38,7 +38,7 @@
     "npm:pi-open-tui",
     "npm:pi-mcp-adapter"
   ],
-  "extensions": [
-  ],
-  "theme": "dark"
+  "extensions": [],
+  "theme": "dark",
+  "defaultThinkingLevel": "max"
 }
