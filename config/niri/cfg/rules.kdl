@@ -225,8 +225,9 @@
     }
 
     // alacritty 宽度已在上方 0.5 组；此处仅保留其余应用
+    // brave 与 helium 宽度已调换：brave 回落到默认宽度 1.0，helium 设为 0.5
     window-rule {
-        match app-id="(firefox|wezterm|thunar|brave)"
+        match app-id="(firefox|wezterm|thunar|helium)"
         default-column-width { proportion 0.5; }
     }
     // Zen: Bitwarden 密码管理器弹窗

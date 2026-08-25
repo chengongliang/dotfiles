@@ -9,6 +9,16 @@
             width 2
         }
 
+        // Tabbed 窗口标签指示条（Mod+W 切换列 tabbed 显示）
+        tab-indicator {
+            hide-when-single-tab
+            place-within-column
+            gap 4
+            width 4
+            gaps-between-tabs 2
+            corner-radius 8
+        }
+
         preset-column-widths {
             proportion 0.33333
             proportion 0.5

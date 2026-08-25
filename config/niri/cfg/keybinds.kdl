@@ -41,7 +41,7 @@ binds {
     Mod+Ctrl+Shift+Return               hotkey-overlay-title="Open Terminal: Kitty" { spawn "kitty" "-e" "fish"; }
     Mod+Space                           hotkey-overlay-title="Open App Launcher: noctalia launcher" { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
     Mod+B                               hotkey-overlay-title="Open Browser: zen-browser" { spawn "zen-browser"; }
-    Mod+Shift+B                         hotkey-overlay-title="Open Browser: Helium-browser" { spawn "helium-browser"; }
+    Mod+Shift+B                         hotkey-overlay-title="Open Browser: Brave" { spawn "brave"; }
     Mod+ALT+L                           hotkey-overlay-title="Lock Screen: noctalia lock" { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
     Mod+Shift+Q                        hotkey-overlay-title="Session Menu: noctalia sessionMenu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
 
@@ -153,6 +153,7 @@ binds {
     // ─── Layout Controls ───
     Mod+F                               { expand-column-to-available-width; }
     Mod+Shift+F 			{ switch-preset-column-width; }
+    Mod+CTRL+Space                      { set-column-width "50%"; }
     Mod+C                               { center-column; }
     Mod+CTRL+C                          { center-visible-columns; }
     Mod+Minus                           { set-column-width "-10%"; }
@@ -162,8 +163,11 @@ binds {
 
     // ─── Modes ───
     Mod+T                               { toggle-window-floating; }
+    Mod+F11                             { fullscreen-window; }
     Mod+CTRL+F                          { fullscreen-window; }
     Mod+W                               { toggle-column-tabbed-display; }
+    Mod+CTRL+T                          { consume-window-into-column; }   // 窗口并入列/tab
+    Mod+CTRL+Shift+T                    { expel-window-from-column; }     // 窗口移出列/tab
 
     // ─── Screenshots ───
     CTRL+Shift+1                        { screenshot; }
