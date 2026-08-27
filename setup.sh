@@ -51,6 +51,15 @@ PACKAGES=(
     niri
     opencode
     zed
+
+    # Lock screen（Win11 风格 hyprlock 锁屏，见 config/hypr/）
+    # ttf-wps-fonts 提供 Segoe UI / Segoe UI Semilight / Segoe MDL2 Assets（AUR）
+    # noto-fonts-cjk 提供锁屏日期行的中文字形
+    # python 供 config/hypr/scripts/lock.sh 解析 noctalia 当前壁纸
+    hyprlock
+    ttf-wps-fonts
+    noto-fonts-cjk
+    python
 )
 
 echo -e "${CYAN}Installing packages via paru...${NC}"
