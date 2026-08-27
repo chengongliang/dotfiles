@@ -33,6 +33,7 @@ binds {
     CTRL+ALT+D hotkey-overlay-title="钉钉" { spawn-sh "$HOME/.config/niri/scripts/focus-or-spawn.sh com.alibabainc.dingtalk dingtalk 1280 900"; }
 
     // ─── Applications ───
+    Mod+F12                             hotkey-overlay-title="重启状态栏" { spawn-sh "$HOME/.config/niri/scripts/restart-noctalia.sh"; }
     Mod+Return                          hotkey-overlay-title="Open Terminal: Ghostty" { spawn "ghostty" "-e" "fish"; }
     Mod+Grave                           hotkey-overlay-title="Dropdown Terminal: Kitty Quake" { spawn-sh "$HOME/.config/niri/scripts/quick-access-terminal.sh"; }
     Shift+Alt+A                         hotkey-overlay-title="SSH to rancher1" { spawn "ghostty" "-e" "ssh" "root@rancher1"; }
@@ -42,7 +43,7 @@ binds {
     Mod+Space                           hotkey-overlay-title="Open App Launcher: noctalia launcher" { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
     Mod+B                               hotkey-overlay-title="Open Browser: zen-browser" { spawn "zen-browser"; }
     Mod+Shift+B                         hotkey-overlay-title="Open Browser: Brave" { spawn "brave"; }
-    Mod+ALT+L                           hotkey-overlay-title="Lock Screen: noctalia lock" { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
+    Mod+ALT+L                           hotkey-overlay-title="Lock Screen: Win11 style (hyprlock)" { spawn "hyprlock" "-q"; }
     Mod+Shift+Q                        hotkey-overlay-title="Session Menu: noctalia sessionMenu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
 
     // Please choose your own file manager.
