@@ -99,8 +99,30 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | Terminals | Kitty, Alacritty, Ghostty |
 | Tmux | TPM, Dracula theme, resurrect/continuum |
 | Window manager | niri |
+| Lock screen | hyprlock, styled after the Windows 11 lock screen |
 | CLI tools | btop, bottom, fastfetch, lazygit, yazi, opencode, paru |
 | Git | Global Git config and XDG global ignore file |
+
+### Lock screen
+
+`config/hypr/` holds a hyprlock setup that mimics the Windows 11 idle lock
+screen: sharp wallpaper, a large clock near the top, a bold date underneath,
+and no avatar or password box until you start typing.
+
+The wallpaper follows whatever the noctalia shell is currently using.
+`scripts/lock.sh` reads noctalia's wallpaper state, writes a throwaway runtime
+config into `$XDG_RUNTIME_DIR`, and hands that to `hyprlock -c`, so
+`hyprlock.conf` itself stays generic and machine-independent. If the state file
+cannot be read it falls back to the wallpaper bundled with noctalia.
+
+Both lock entry points call that script: the niri keybind `Mod+Alt+L`, and
+noctalia's idle `lockCommand`. The keybind ships with this repo; noctalia's own
+settings are not tracked, so on a new machine point its `lockCommand` at
+`~/.config/hypr/scripts/lock.sh` by hand. Fonts come from `ttf-wps-fonts`
+(Segoe UI family) and `noto-fonts-cjk` (CJK date line).
+
+Note: `font_size` in `hyprlock.conf` is in **points**, not pixels — hyprgraphics
+calls `pango_font_description_set_size()` at 96 DPI, so rendered px = pt x 4/3.
 
 ## Verification
 
@@ -110,6 +132,12 @@ Useful checks after changes:
 bash -n setup.sh
 stow --simulate -t ~ home
 stow --simulate -t ~/.config config
+```
+
+For lock screen script changes:
+
+```bash
+bash -n config/hypr/scripts/lock.sh
 ```
 
 For Fish config changes:

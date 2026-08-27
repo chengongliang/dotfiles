@@ -43,7 +43,7 @@ binds {
     Mod+Space                           hotkey-overlay-title="Open App Launcher: noctalia launcher" { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
     Mod+B                               hotkey-overlay-title="Open Browser: zen-browser" { spawn "zen-browser"; }
     Mod+Shift+B                         hotkey-overlay-title="Open Browser: Brave" { spawn "brave"; }
-    Mod+ALT+L                           hotkey-overlay-title="Lock Screen: Win11 style (hyprlock)" { spawn "hyprlock" "-q"; }
+    Mod+ALT+L                           hotkey-overlay-title="Lock Screen: Win11 style (hyprlock)" { spawn-sh "$HOME/.config/hypr/scripts/lock.sh"; }
     Mod+Shift+Q                        hotkey-overlay-title="Session Menu: noctalia sessionMenu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
 
     // Please choose your own file manager.
