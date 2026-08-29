@@ -1,7 +1,8 @@
 {
   "defaultProvider": "NewAPI",
   "defaultModel": "deepseek-v4-flash",
-  "lastChangelogVersion": "0.84.2",
+  "defaultThinkingLevel": "max",
+  "lastChangelogVersion": "0.84.3",
   "providerCompat": {
     "claudeCodeHeaders": {
       "User-Agent": "claude-cli/2.1.92 (external, cli)",
@@ -30,15 +31,17 @@
     }
   },
   "packages": [
-    "git:github.com/MasuRii/pi-image-tools",
-    "git:github.com/MasuRii/pi-rtk-optimizer",
+    "npm:pi-image-tools",
     "npm:@gotgenes/pi-subagents",
     "npm:pi-rounded-tools",
     "npm:@firstpick/pi-themes-bundle",
     "npm:pi-open-tui",
-    "npm:pi-mcp-adapter"
+    "npm:pi-mcp-adapter",
+    "npm:@ff-labs/pi-fff",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:pi-rtk-optimizer"
   ],
   "extensions": [],
-  "theme": "dark",
-  "defaultThinkingLevel": "max"
+  "theme": "dark"
 }

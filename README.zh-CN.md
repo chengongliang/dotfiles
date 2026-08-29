@@ -96,8 +96,28 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | 终端 | Kitty、Alacritty、Ghostty |
 | Tmux | TPM、Dracula theme、resurrect/continuum |
 | 窗口管理器 | niri |
+| 锁屏 | hyprlock，仿 Windows 11 锁屏样式 |
 | CLI 工具 | btop、bottom、fastfetch、lazygit、yazi、opencode、paru |
 | Git | 全局 Git 配置和 XDG 全局 ignore 文件 |
+
+### 锁屏
+
+`config/hypr/` 是一套仿 Windows 11 待机锁屏的 hyprlock 配置：壁纸不模糊、
+顶部大时钟、下方加粗日期，头像和密码框在开始输入前都不出现。
+
+壁纸跟随 noctalia 当前实际在用的那张。`scripts/lock.sh` 读取 noctalia 的
+壁纸状态，在 `$XDG_RUNTIME_DIR` 下生成一份一次性运行时配置交给
+`hyprlock -c`，因此 `hyprlock.conf` 本身不含机器专属路径。读不到状态文件
+时回退到 noctalia 自带壁纸。
+
+两个锁屏入口都走这个脚本：niri 快捷键 `Mod+Alt+L`，以及 noctalia 空闲锁屏的
+`lockCommand`。快捷键随本仓库部署；noctalia 自身的配置不纳入仓库，新机器上需
+手动把它的 `lockCommand` 指向 `~/.config/hypr/scripts/lock.sh`。字体依赖
+`ttf-wps-fonts`（Segoe UI 系列）和 `noto-fonts-cjk`（日期行中文字形）。
+
+注意：`hyprlock.conf` 里的 `font_size` 单位是**磅（pt）**不是像素 ——
+hyprgraphics 走 `pango_font_description_set_size()`，96 DPI，
+即实际渲染像素 = pt x 4/3。
 
 ## 验证
 
@@ -107,6 +127,12 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 bash -n setup.sh
 stow --simulate -t ~ home
 stow --simulate -t ~/.config config
+```
+
+修改锁屏脚本后：
+
+```bash
+bash -n config/hypr/scripts/lock.sh
 ```
 
 修改 Fish 配置后：
