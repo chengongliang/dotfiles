@@ -81,6 +81,13 @@
        open-focused false
     }
 
+    // Steam 大屏模式 (Big Picture Mode / 大屏幕模式): 自动全屏，不浮动（覆盖上面的浮动规则）
+    window-rule {
+        match app-id=r#"^(steam|steamwebhelper)$" title=r#"(大屏幕|[Bb]ig [Pp]icture)"#
+        open-floating false
+        open-fullscreen true
+    }
+
     layer-rule {
         match namespace="^noctalia-wallpaper*"
         place-within-backdrop true
