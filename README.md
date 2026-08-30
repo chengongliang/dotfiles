@@ -99,7 +99,7 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | Terminals | Kitty, Alacritty, Ghostty |
 | Tmux | TPM, Dracula theme, resurrect/continuum |
 | Window manager | niri |
-| Lock screen | hyprlock, styled after the Windows 11 lock screen |
+| Lock screen | optional hyprlock, styled after the Windows 11 lock screen; noctalia fallback elsewhere |
 | CLI tools | btop, bottom, fastfetch, lazygit, yazi, opencode, paru |
 | Git | Global Git config and XDG global ignore file |
 
@@ -109,16 +109,23 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 screen: sharp wallpaper, a large clock near the top, a bold date underneath,
 and no avatar or password box until you start typing.
 
+This is an **optional** component, enabled only on machines that use it:
+`setup.sh` asks once (or force it with `WITH_HYPR=1`); when disabled it skips
+the `hyprlock`/font packages and stows the config with `--ignore='^hypr$'`.
+The niri keybind always points at `~/.config/niri/scripts/lock.sh`, a small
+shim: on machines with the optional config deployed (and `hyprlock` installed)
+it runs the hyprlock script, everywhere else it falls back to noctalia's own
+lock screen.
+
 The wallpaper follows whatever the noctalia shell is currently using.
 `scripts/lock.sh` reads noctalia's wallpaper state, writes a throwaway runtime
 config into `$XDG_RUNTIME_DIR`, and hands that to `hyprlock -c`, so
 `hyprlock.conf` itself stays generic and machine-independent. If the state file
 cannot be read it falls back to the wallpaper bundled with noctalia.
 
-Both lock entry points call that script: the niri keybind `Mod+Alt+L`, and
-noctalia's idle `lockCommand`. The keybind ships with this repo; noctalia's own
-settings are not tracked, so on a new machine point its `lockCommand` at
-`~/.config/hypr/scripts/lock.sh` by hand. Fonts come from `ttf-wps-fonts`
+noctalia's idle `lockCommand` can also point at
+`~/.config/hypr/scripts/lock.sh`; noctalia's own settings are not tracked, so
+on a new machine set that by hand. Fonts come from `ttf-wps-fonts`
 (Segoe UI family) and `noto-fonts-cjk` (CJK date line).
 
 Note: `font_size` in `hyprlock.conf` is in **points**, not pixels — hyprgraphics
