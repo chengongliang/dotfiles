@@ -9,6 +9,16 @@ NC='\033[0m'
 
 echo -e "${CYAN}=== Dotfiles Bootstrap ===${NC}"
 
+# --- 0. Optional Hyprlock lock screen (config/hypr/) ---
+# config/hypr/（Win11 风格 hyprlock 锁屏）是可选项，只在需要的机器上启用。
+# 环境变量可跳过询问：WITH_HYPR=1 启用，WITH_HYPR=0 跳过；未设置时交互询问。
+WITH_HYPR="${WITH_HYPR:-}"
+if [[ -z "$WITH_HYPR" ]]; then
+    answer=""
+    read -r -p "Install optional Hyprlock lock screen (config/hypr)? [y/N] " answer < /dev/tty 2>/dev/null || true
+    [[ "${answer,,}" == y* ]] && WITH_HYPR=1 || WITH_HYPR=0
+fi
+
 # --- 1. Install paru (AUR helper) if missing ---
 if ! command -v paru &>/dev/null; then
     echo -e "${CYAN}Installing paru (AUR helper)...${NC}"
@@ -51,8 +61,11 @@ PACKAGES=(
     niri
     opencode
     zed
+)
 
-    # Lock screen（Win11 风格 hyprlock 锁屏，见 config/hypr/）
+# 可选包：仅在 WITH_HYPR=1 时安装
+OPTIONAL_PACKAGES=(
+    # Lock screen（可选项：Win11 风格 hyprlock 锁屏，见 config/hypr/）
     # ttf-wps-fonts 提供 Segoe UI / Segoe UI Semilight / Segoe MDL2 Assets（AUR）
     # noto-fonts-cjk 提供锁屏日期行的中文字形
     # python 供 config/hypr/scripts/lock.sh 解析 noctalia 当前壁纸
@@ -64,6 +77,11 @@ PACKAGES=(
 
 echo -e "${CYAN}Installing packages via paru...${NC}"
 sudo paru -S --noconfirm --needed "${PACKAGES[@]}"
+
+if [[ "$WITH_HYPR" == 1 ]]; then
+    echo -e "${CYAN}Installing optional Hyprlock lock screen packages...${NC}"
+    sudo paru -S --noconfirm --needed "${OPTIONAL_PACKAGES[@]}"
+fi
 
 # --- 2b. g（Go 版本管理器） ---
 # 非官方包，通过官方安装脚本安装到 ~/.g。fish 配置中 source ~/.g/env.fish。
@@ -133,11 +151,17 @@ backup_existing "$HOME/.tmux.conf"
 ln -sf .tmux/.tmux.conf "$HOME/.tmux.conf"
 
 echo -e "${CYAN}Deploying XDG config (~/.config/)...${NC}"
-# 对 config/ 下的每个 app 目录，备份本地已存在的同名目录/文件
+# 对 config/ 下的每个 app 目录，备份本地已存在的同名目录/文件；
+# 未启用可选的 hyprlock 锁屏时跳过 config/hypr/。
 for app in $(find config -maxdepth 1 -mindepth 1 -type d -printf '%f\n'); do
+    [[ "$WITH_HYPR" == 0 && "$app" == "hypr" ]] && continue
     backup_existing "$HOME/.config/$app"
 done
-stow -t "$HOME/.config" config
+if [[ "$WITH_HYPR" == 1 ]]; then
+    stow -t "$HOME/.config" config
+else
+    stow --ignore='^hypr$' -t "$HOME/.config" config
+fi
 
 echo -e "${CYAN}Deploying pi config (~/.pi/)...${NC}"
 # pi 的 agent 目录含大量运行时文件（sessions/backup/skills/npm 等），
@@ -169,6 +193,7 @@ echo "  1. Neovim plugins:   nvim --headless '+Lazy! sync' +qa"
 echo "  2. SSH keys:         ssh-keygen or copy manually"
 echo "  3. GPG keys:         gpg --import or gpg --gen-key"
 echo "  4. Kube config:      place ~/.kube/config"
+echo "  5. Optional Hyprlock lock screen: re-run WITH_HYPR=1 ./setup.sh (idempotent)"
 echo ""
 echo -e "${CYAN}To undo symlinks:${NC}"
 echo "  cd ~/dotfiles && stow --delete -t ~ home && stow --delete -t ~/.config config && stow --delete -t ~/.pi pi"

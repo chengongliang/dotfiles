@@ -5,7 +5,7 @@
 这是个人 dotfiles 仓库，使用 Git 和 GNU Stow 管理配置文件。
 
 - `home/`：部署到 `$HOME`，包含 `.gitconfig`、`.npmrc`、`.tmux/` 等。
-- `config/`：部署到 `$HOME/.config`，包含 fish、Neovim、kitty、alacritty、ghostty、niri、fastfetch、lazygit 等应用配置。
+- `config/`：部署到 `$HOME/.config`，包含 fish、Neovim、kitty、alacritty、ghostty、niri、fastfetch、lazygit 等应用配置。其中 `config/hypr/`（Win11 风格 hyprlock 锁屏）是**可选项**，只在需要它的机器上启用（`setup.sh` 会询问，或用 `WITH_HYPR=1` 强制启用）。
 - `pi/`：部署到 `$HOME/.pi`，包含 pi coding agent 的配置（`settings.json`、`mcp.json`、`open-tui.json`、`AGENTS.md`、`extensions/*.ts`、`npm/package.json`）。运行时数据与主机专属文件（`models.json`、`auth.json`、`trust.json`、`sessions/`、`skills/` 等）通过 `pi/.gitignore` 排除。
 - `setup.sh`：新机器 bootstrap 脚本，主要面向 Arch 系发行版，并依赖 `paru`。
 - `home/.tmux/plugins/tpm`：Tmux Plugin Manager 子模块。
@@ -18,6 +18,13 @@
 stow -t ~ home
 stow -t ~/.config config
 stow --no-folding -t ~/.pi pi
+```
+
+可选的 hyprlock 锁屏（`config/hypr/`）默认随 `stow -t ~/.config config` 一起部署；
+不需要它的机器可以单独撤销：
+
+```bash
+unlink ~/.config/hypr   # 或用 setup.sh 部署时 WITH_HYPR=0，会自动排除
 ```
 
 撤销部署：
