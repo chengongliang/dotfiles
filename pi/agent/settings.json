@@ -1,6 +1,6 @@
 {
   "defaultProvider": "NewAPI",
-  "defaultModel": "deepseek-v4-flash",
+  "defaultModel": "glm-5.3-flash",
   "defaultThinkingLevel": "max",
   "lastChangelogVersion": "0.84.3",
   "providerCompat": {
@@ -40,8 +40,10 @@
     "npm:@ff-labs/pi-fff",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@juicesharp/rpiv-todo",
-    "npm:pi-rtk-optimizer"
+    "npm:pi-rtk-optimizer",
+    "git:github.com/beautifulrem/pi-sakura-cyberdeck"
   ],
   "extensions": [],
-  "theme": "dark"
+  "theme": "sakura-macaron",
+  "tuiMode": "fullscreen"
 }
