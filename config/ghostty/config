@@ -1,3 +1,9 @@
+# 配色主题：Ghostty 内置 Catppuccin Mocha
+# 色值来源 /usr/share/ghostty/themes/Catppuccin Mocha，
+# kitty 与 alacritty 已按同一组色值对齐，改动时请三处同步。
+# 注：此处不要再写 background / foreground / palette，否则会覆盖主题。
+theme = Catppuccin Mocha
+
 # 字体族（要用 Ghostty 识别的名称）
 # NFM 变体：Nerd 图标按单宽对齐，TUI/.statusline 列对齐更稳
 font-family = JetBrainsMono Nerd Font Mono

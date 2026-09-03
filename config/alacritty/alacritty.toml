@@ -24,29 +24,8 @@ multiplier = 3
 [colors]
 draw_bold_text_with_bright_colors = true
 
-[colors.primary]
-background = "0x2E3440"
-foreground = "0xD8DEE9"
-
-[colors.normal]
-black = "0x3B4252"
-red = "0xBF616A"
-green = "0xA3BE8C"
-yellow = "0xEBCB8B"
-blue = "0x81A1C1"
-magenta = "0xB48EAD"
-cyan = "0x88C0D0"
-white = "0xE5E9F0"
-
-[colors.bright]
-black = "0x4C566A"
-red = "0xBF616A"
-green = "0xA3BE8C"
-yellow = "0xEBCB8B"
-blue = "0x81A1C1"
-magenta = "0xB48EAD"
-cyan = "0x8FBCBB"
-white = "0xECEFF4"
+# 配色全部来自 themes/catppuccin-mocha.toml（见文件末尾 general.import）。
+# 注意：import 会覆盖它之前定义的同名项，所以不要在本文件里再写 [colors.*]。
 
 [font]
 size = 12
@@ -160,6 +139,6 @@ mods = "Control"
 action = "ResetFontSize"
 
 [general]
-import = ["~/.config/alacritty/themes/noctalia.toml"]
+import = ["~/.config/alacritty/themes/catppuccin-mocha.toml"]
 live_config_reload = true
 working_directory = "None"
