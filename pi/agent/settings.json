@@ -2,7 +2,7 @@
   "defaultProvider": "NewAPI",
   "defaultModel": "glm-5.3-flash",
   "defaultThinkingLevel": "max",
-  "lastChangelogVersion": "0.84.3",
+  "lastChangelogVersion": "0.84.4",
   "providerCompat": {
     "claudeCodeHeaders": {
       "User-Agent": "claude-cli/2.1.92 (external, cli)",
@@ -41,7 +41,10 @@
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@juicesharp/rpiv-todo",
     "npm:pi-rtk-optimizer",
-    "git:github.com/beautifulrem/pi-sakura-cyberdeck"
+    {
+      "source": "git:github.com/beautifulrem/pi-sakura-cyberdeck",
+      "extensions": ["!extensions/dual-quota/index.ts"]
+    }
   ],
   "extensions": [],
   "theme": "sakura-macaron",
