@@ -4,7 +4,7 @@
   "dependencies": {
     "@ff-labs/pi-fff": "^0.10.6",
     "@firstpick/pi-themes-bundle": "^0.1.6",
-    "@gotgenes/pi-subagents": "^21.2.2",
+    "@gotgenes/pi-subagents": "^21.4.0",
     "@juicesharp/rpiv-ask-user-question": "^2.9.0",
     "@juicesharp/rpiv-todo": "^2.9.0",
     "pi-image-tools": "^1.4.0",

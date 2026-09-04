@@ -2,6 +2,9 @@
   "enabled": true,
   "settingsLanguage": "zh",
   "cursorStyle": "block",
+  "fullscreen": {
+    "wheelScrollLines": 4
+  },
   "icons": {
     "mode": "nerd"
   },
@@ -14,8 +17,8 @@
     "runtime": true,
     "context": true,
     "tokens": true,
-    "cost": true,
-    "extensionStatuses": true
+    "cost": false,
+    "extensionStatuses": false
   },
   "telemetry": {
     "enabled": true,
