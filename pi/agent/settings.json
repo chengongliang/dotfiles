@@ -43,7 +43,7 @@
     "npm:pi-rtk-optimizer",
     {
       "source": "git:github.com/beautifulrem/pi-sakura-cyberdeck",
-      "extensions": ["!extensions/dual-quota/index.ts"]
+      "extensions": ["-extensions/dual-quota/index.ts", "-extensions/zentui/index.ts"]
     }
   ],
   "extensions": [],
