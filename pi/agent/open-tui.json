@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "settingsLanguage": "zh",
-  "cursorStyle": "block",
+  "cursorStyle": "underline",
   "fullscreen": {
     "wheelScrollLines": 4
   },
@@ -28,5 +28,8 @@
     "tokens": true,
     "stalls": true,
     "cost": true
+  },
+  "thinkingPeek": {
+    "lines": 1
   }
 }
