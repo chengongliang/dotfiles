@@ -23,6 +23,7 @@ home/.kube/
 .env.*
 
 # Generated / cache
+__pycache__/
 fish_variables
 *.bak
 config/fish/conf.d/local.fish
