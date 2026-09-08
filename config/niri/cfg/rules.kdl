@@ -219,6 +219,19 @@
     	}
     }
 
+    // 钉钉透明覆盖层 / toast 载体窗口（title 与 app-id 同名）：
+    // 钉钉按 X11 全局坐标定位它，在 niri 下会叠在主窗口上，全局 blur 又把
+    // 它渲染成毛玻璃"蒙板"。这里关掉 blur 恢复完全透明（视觉上只剩 toast
+    // 文字小块）、不抢焦点；自动关闭由 dynamic-float.py 处理。
+    window-rule {
+        match app-id=r#"^com\.alibabainc\.dingtalk$"# title=r#"^com\.alibabainc\.dingtalk$"#
+        open-floating true
+        open-focused false
+        background-effect {
+            blur false
+        }
+    }
+
     // 微信: 固定浮动尺寸
     window-rule {
     	match app-id="wechat"
@@ -243,6 +256,8 @@
         default-column-width { proportion 0.3; }
         max-width 500
     }
+    // Zen 授权/Bitwarden 弹窗的浮动改由 scripts/dynamic-float.py 动态处理：
+    // Firefox 系窗口打开后才设置标题，window-rule 的 open-floating 按 title 匹配不到（见 niri FAQ）
     window-rule {
         match app-id="zen"
         exclude title=r#".*[Bb]itwarden.*"#
