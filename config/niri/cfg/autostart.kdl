@@ -5,3 +5,8 @@
     spawn-sh-at-startup "karing"
     spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
     spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
+    // 动态浮动：Firefox/Zen 窗口打开后才设置标题，window-rule 的 open-floating 匹配不到，
+    // 由脚本监听事件流在标题更新后浮动（OAuth 授权弹窗、Bitwarden 等）
+    // 改由 systemd 用户服务管理（Restart=always 防止进程悄悄死掉）：
+    // systemctl --user enable --now dynamic-float.service
+    // spawn-sh-at-startup "python3 ~/.config/niri/scripts/dynamic-float.py >>/tmp/niri-dynamic-float.log 2>&1"
