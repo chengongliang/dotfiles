@@ -29,7 +29,7 @@ binds {
     Mod+CTRL+Shift+N hotkey-overlay-title="清空通知" { spawn-sh "qs -c noctalia-shell ipc call notifications clear"; }
 
     // ─── Tray App Quick Access ───
-    CTRL+ALT+W hotkey-overlay-title="微信" { spawn-sh "$HOME/.config/niri/scripts/focus-or-spawn.sh wechat wechat 1280 900"; }
+    CTRL+ALT+W hotkey-overlay-title="微信" { spawn-sh "$HOME/.config/niri/scripts/focus-or-spawn.sh wechat wechat-universal 1280 900"; }
     CTRL+ALT+D hotkey-overlay-title="钉钉" { spawn-sh "$HOME/.config/niri/scripts/focus-or-spawn.sh com.alibabainc.dingtalk dingtalk 1280 900"; }
 
     // ─── Applications ───
