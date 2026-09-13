@@ -4,12 +4,12 @@
   "dependencies": {
     "@ff-labs/pi-fff": "^0.10.6",
     "@firstpick/pi-themes-bundle": "^0.1.6",
-    "@gotgenes/pi-subagents": "^21.4.4",
-    "@juicesharp/rpiv-ask-user-question": "^2.9.0",
-    "@juicesharp/rpiv-todo": "^2.9.0",
+    "@gotgenes/pi-subagents": "^21.7.0",
+    "@juicesharp/rpiv-ask-user-question": "^2.10.1",
+    "@juicesharp/rpiv-todo": "^2.10.1",
     "pi-image-tools": "^1.4.0",
-    "pi-mcp-adapter": "^2.32.1",
-    "pi-open-tui": "^0.3.4",
+    "pi-mcp-adapter": "^2.33.0",
+    "pi-open-tui": "^0.3.5",
     "pi-rounded-tools": "^0.1.3",
     "pi-rtk-optimizer": "^0.9.0"
   }
