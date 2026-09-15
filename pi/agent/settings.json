@@ -1,6 +1,6 @@
 {
   "defaultProvider": "NewAPI",
-  "defaultModel": "glm-5.3-flash",
+  "defaultModel": "deepseek-v4.1-flash",
   "defaultThinkingLevel": "max",
   "lastChangelogVersion": "0.85.1",
   "providerCompat": {
