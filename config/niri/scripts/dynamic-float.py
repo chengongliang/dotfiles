@@ -53,6 +53,9 @@ class Rule:
     # 匹配后直接关闭窗口（用于钉钉透明覆盖层等无功能、
     # 且经 xwayland-satellite 丢失 input region 而遮挡点击的弹层）
     close: bool = False
+    # close 仅对窗口尺寸命中白名单时生效：钉钉 title 同名的窗口里有
+    # 交互弹窗（如表情面板 514x334），不能一刀切
+    close_sizes: tuple[tuple[int, int], ...] | None = None
 
     def matches(self, window) -> bool:
         if len(self.match) > 0 and not any(m.matches(window) for m in self.match):
@@ -75,9 +78,12 @@ RULES = [
     # 钉钉透明覆盖层 / toast 载体（title 与 app-id 同名）：经 xwayland-satellite
     # 丢失 X11 input region，整层悬浮挡住主窗口点击，只能等它自动消失。
     # 直接关闭（钉钉自身几秒后也会销毁它，提前关闭无副作用）。
+    # 仅关已知尺寸：1280x900 主覆盖层、220x70 小 toast 条；
+    # 同 title 的交互弹窗（表情面板 514x334 等）不关。
     Rule(
         [Match(title=r"^com\.alibabainc\.dingtalk$", app_id=r"^com\.alibabainc\.dingtalk$")],
         close=True,
+        close_sizes=((1280, 900), (220, 70)),
     ),
 ]
 
@@ -165,6 +171,13 @@ def center_window(window_id: int, size: tuple[int, int] | None) -> None:
 
 def apply_rule(window_id: int, rule: Rule) -> None:
     if rule.close:
+        if rule.close_sizes is not None:
+            window = find_window(window_id)
+            if window is None:
+                return
+            size = tuple(window.get("layout", {}).get("window_size") or ())
+            if size not in rule.close_sizes:
+                return
         # 略作延迟，让提示文字短暂可见后再关闭（不阻塞主循环太久）
         time.sleep(0.5)
         niri_action("close-window", "--id", str(window_id))
