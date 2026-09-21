@@ -98,6 +98,7 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | Editors | Neovim, micro, Zed |
 | Terminals | Kitty, Alacritty, Ghostty |
 | Tmux | TPM, Dracula theme, resurrect/continuum |
+| Zellij | Explicit keybindings, strider filepicker, session-manager welcome screen |
 | Window manager | niri |
 | Lock screen | optional hyprlock, styled after the Windows 11 lock screen; noctalia fallback elsewhere |
 | CLI tools | btop, bottom, fastfetch, lazygit, yazi, opencode, paru |
