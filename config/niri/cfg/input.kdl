@@ -23,6 +23,18 @@ input {
         //accel-speed 0.0
     }
 
+    // ── 完整恢复焦点跟随鼠标（含自动滚动视图）[2026-09-15] ──────────────
+    // 保留全部原有行为：鼠标移到部分可见的窗口时，也会自动滚动视图并聚焦过去。
+    //
+    // 已知副作用（Wayland + XWayland 应用如钉钉）：焦点随鼠标频繁切换时，键盘的
+    // key-release 事件可能丢失，按键会被判定为「一直按着」，niri 便以 repeat-rate
+    // （默认 25/s）持续发送重复事件 →「无限粘贴」「按键停不下来」直至应用卡死。
+    // 如果再次遇到，依次尝试：
+    //   1) terminal 里运行  fix-stuck-keys     （释放卡住的修饰键）
+    //   2) 按一下卡住的那个物理键（物理 release 事件会重置 X11 状态）
+    //   3) 切换一次窗口焦点（Mod + 方向键）
+    //   4) 应用已卡死就重启应用
     focus-follows-mouse // Automatically focus windows under the mouse pointer
+
     workspace-auto-back-and-forth // Enable workspace back & forth switching
 }
