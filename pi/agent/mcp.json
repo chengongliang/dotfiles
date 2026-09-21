@@ -19,9 +19,10 @@
       "url": "https://mcp.tavily.com/mcp/"
     },
     "dbx": {
-      "command": "/home/chengongliang/.local/share/fnm/node-versions/v24.20.0/installation/bin/node",
+      "command": "npx",
       "args": [
-        "/home/chengongliang/.local/share/fnm/node-versions/v24.20.0/installation/lib/node_modules/@dbx-app/mcp-server/bin/dbx-mcp-server.js"
+        "-y",
+        "@dbx-app/mcp-server"
       ]
     }
   }
