@@ -3,8 +3,14 @@
 
     spawn-sh-at-startup "qs -c noctalia-shell"
     spawn-sh-at-startup "karing"
-    spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
-    spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
+    // ── 已注释 [2026-09-15] 避免重复的剪贴板监听器 ────────────────────
+    // noctalia-shell 已经通过 ~/.config/noctalia/settings.json 的
+    // appLauncher.clipboardWatchTextCommand / clipboardWatchImageCommand
+    // 启动了同样的监听命令。两处同时启用会让每个剪贴板变化被 store 两次
+    // （cliphist 的 id 以 +4 递增，数据库翻倍增长）。
+    // 现在由 noctalia 统一管理；若禁用 noctalia 的剪贴板功能，请取消下面两行注释。
+    // spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
+    // spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
     // 动态浮动：Firefox/Zen 窗口打开后才设置标题，window-rule 的 open-floating 匹配不到，
     // 由脚本监听事件流在标题更新后浮动（OAuth 授权弹窗、Bitwarden 等）
     // 改由 systemd 用户服务管理（Restart=always 防止进程悄悄死掉）：
