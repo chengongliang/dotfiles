@@ -1,0 +1,41 @@
+--- a/Panel.qml
++++ b/Panel.qml
+@@ -140,6 +140,28 @@
+     Keys.onDigit7Pressed: filterType = "Emoji"
+     Keys.onDigit8Pressed: filterType = "File"
+ 
++    // clipper-search-focus: focus the clipboard search field.
++    // NTextInput is only a wrapper - the inner TextField is the item that actually
++    // receives keyboard input, so focusing the wrapper alone is not enough.
++    function focusSearchField() {
++        if (!searchInput || !searchInput.inputItem)
++            return;
++        searchInput.inputItem.forceActiveFocus();
++        searchInput.inputItem.cursorPosition = searchInput.inputItem.text.length;
++    }
++
++    // clipper-search-focus: "/" or "f" jumps to the search field, focus only.
++    // The key itself is never typed - once the field has focus the characters are
++    // handled by the TextField and no longer reach this handler.
++    Keys.onPressed: event => {
++        const isSearchShortcut = event.key === Qt.Key_Slash || event.key === Qt.Key_F;
++        const hasModifier = event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier);
++        if (isSearchShortcut && !hasModifier) {
++            focusSearchField();
++            event.accepted = true;
++        }
++    }
++
+     // Main container - transparent fullscreen
+     Item {
+         id: mainContainer
+@@ -1099,7 +1121,8 @@
+                     model: root.filteredItems
+ 
+                     Keys.onUpPressed: {
+-                        searchInput.forceActiveFocus();
++                        // Up = focus search
++                        root.focusSearchField();
+                     }
+                     Keys.onLeftPressed: {
+                         if (count > 0) {
