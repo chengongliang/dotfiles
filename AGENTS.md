@@ -7,6 +7,7 @@
 - `home/`：部署到 `$HOME`，包含 `.gitconfig`、`.npmrc`、`.tmux/` 等。
 - `config/`：部署到 `$HOME/.config`，包含 fish、Neovim、kitty、alacritty、ghostty、niri、fastfetch、lazygit 等应用配置。其中 `config/hypr/`（Win11 风格 hyprlock 锁屏）是**可选项**，只在需要它的机器上启用（`setup.sh` 会询问，或用 `WITH_HYPR=1` 强制启用）。
 - `pi/`：部署到 `$HOME/.pi`，包含 pi coding agent 的配置（`settings.json`、`mcp.json`、`open-tui.json`、`AGENTS.md`、`extensions/*.ts`、`npm/package.json`）。运行时数据与主机专属文件（`models.json`、`auth.json`、`trust.json`、`sessions/`、`skills/` 等）通过 `pi/.gitignore` 排除。
+- `patches/`：针对**外部安装**组件（例如 noctalia-shell 的 clipper 插件）的补丁与重新应用脚本，**不参与 Stow 部署**。外部组件升级会覆盖其安装目录，升级后重新执行对应脚本即可恢复修改。
 - `setup.sh`：新机器 bootstrap 脚本，主要面向 Arch 系发行版，并依赖 `paru`。
 - `home/.tmux/plugins/tpm`：Tmux Plugin Manager 子模块。
 
@@ -61,6 +62,7 @@ nvim --headless '+Lazy! sync' +qa
 - 修改 Stow 管理的文件时注意目标路径冲突，避免引入会覆盖用户本地私有文件的逻辑。`pi/` 部署必须使用 `--no-folding`，因为 `~/.pi/agent/` 含大量运行时文件，折叠链接整个目录会覆盖它们。
 - 这个仓库混合使用英文和中文注释；新增仓库级说明优先使用中文，配置文件内部遵循原文件风格。
 - 保持变更范围小，不做无关格式化或大规模重排。
+- 外部组件（Noctalia 插件、AUR 安装的应用等）的本地修改不要放进 `config/<app>/`：`config/` 由 Stow 折叠部署，会与组件自身的运行时数据目录冲突。这类修改放到 `patches/`，并附带可重复执行的脚本。
 
 ## 验证建议
 
