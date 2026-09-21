@@ -45,8 +45,9 @@ PACKAGES=(
     alacritty
     ghostty ghostty-shell-integration ghostty-terminfo
 
-    # Tmux
+    # Multiplexers
     tmux
+    zellij
 
     # Herdr (agent multiplexer, AUR)
     herdr
