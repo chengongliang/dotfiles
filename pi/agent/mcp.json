@@ -17,6 +17,12 @@
     "tavily-remote-mcp": {
       "type": "http",
       "url": "https://mcp.tavily.com/mcp/"
+    },
+    "dbx": {
+      "command": "/home/chengongliang/.local/share/fnm/node-versions/v24.20.0/installation/bin/node",
+      "args": [
+        "/home/chengongliang/.local/share/fnm/node-versions/v24.20.0/installation/lib/node_modules/@dbx-app/mcp-server/bin/dbx-mcp-server.js"
+      ]
     }
   }
 }
