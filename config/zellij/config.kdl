@@ -316,7 +316,10 @@ web_client {
 // Choose the theme that is specified in the themes section.
 // Default: default
 // 
-// theme "dracula"
+// 与终端/系统整体配色保持一致（Catppuccin Mocha）
+// 自定义版本：themes/catppuccin-mocha-dark.kdl，只把状态栏 ribbon 改为深底浅字
+// （内置 catppuccin-mocha 的 ribbon_unselected 是浅底反色设计）
+theme "catppuccin-mocha-dark"
  
 // Theme to use when the host terminal reports a dark color palette.
 // Requires `theme_light` to also be set; otherwise `theme` is used.
