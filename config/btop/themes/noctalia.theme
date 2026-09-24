@@ -1,0 +1,83 @@
+# Theme: noctalia (Catppuccin Mocha)
+# 由 dotfiles 维护：btop.conf 里 color_theme = "noctalia" 指向本文件。
+# （Noctalia 的模板生成未启用，故此文件不会与外部生成结果冲突）
+# 色值与 Ghostty/Kitty/Alacritty 使用的 Catppuccin Mocha 保持一致。
+
+# Main bg
+theme[main_bg]="#1e1e2e"
+
+# Main text color
+theme[main_fg]="#cdd6f4"
+
+# Title color for boxes
+theme[title]="#cdd6f4"
+
+# Highlight color for keyboard shortcuts
+theme[hi_fg]="#89dceb"
+
+# Background color of selected item in processes box
+theme[selected_bg]="#585b70"
+
+# Foreground color of selected item in processes box
+theme[selected_fg]="#cdd6f4"
+
+# Color of inactive/disabled text
+theme[inactive_fg]="#6c7086"
+
+# Misc colors for processes box including mini cpu graphs, details memory graph and details status text
+theme[proc_misc]="#89dceb"
+
+# Cpu box outline color
+theme[cpu_box]="#45475a"
+
+# Memory/disks box outline color
+theme[mem_box]="#45475a"
+
+# Net up/down box outline color
+theme[net_box]="#45475a"
+
+# Processes box outline color
+theme[proc_box]="#45475a"
+
+# Box divider line and small boxes line color
+theme[div_line]="#45475a"
+
+# Temperature graph colors
+theme[temp_start]="#a6e3a1"
+theme[temp_mid]="#f9e2af"
+theme[temp_end]="#f38ba8"
+
+# CPU graph colors
+theme[cpu_start]="#a6e3a1"
+theme[cpu_mid]="#f9e2af"
+theme[cpu_end]="#f38ba8"
+
+# Mem/Disk free meter
+theme[free_start]="#a6e3a1"
+theme[free_mid]="#f9e2af"
+theme[free_end]="#f38ba8"
+
+# Mem/Disk cached meter
+theme[cached_start]="#a6e3a1"
+theme[cached_mid]="#f9e2af"
+theme[cached_end]="#f38ba8"
+
+# Mem/Disk available meter
+theme[available_start]="#a6e3a1"
+theme[available_mid]="#f9e2af"
+theme[available_end]="#f38ba8"
+
+# Mem/Disk used meter
+theme[used_start]="#a6e3a1"
+theme[used_mid]="#f9e2af"
+theme[used_end]="#f38ba8"
+
+# Download graph colors
+theme[download_start]="#a6e3a1"
+theme[download_mid]="#f9e2af"
+theme[download_end]="#f38ba8"
+
+# Upload graph colors
+theme[upload_start]="#a6e3a1"
+theme[upload_mid]="#f9e2af"
+theme[upload_end]="#f38ba8"
