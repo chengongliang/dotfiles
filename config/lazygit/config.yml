@@ -25,7 +25,7 @@ gui:
 git:
   diffRenderers:
     - colorArg: always
-      command: delta --dark --paging=never
+      command: delta 
       useConfig: false
   commit:
     signOff: false
