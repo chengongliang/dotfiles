@@ -1,0 +1,7 @@
+{
+  "id": "catppuccin",
+  "description": "Catppuccin Mocha and Latte app themes",
+  "requirements": {
+    "paseo": ">=0.9.1"
+  }
+}
