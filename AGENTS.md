@@ -8,6 +8,7 @@
 - `config/`：部署到 `$HOME/.config`，包含 fish、Neovim、kitty、alacritty、ghostty、niri、fastfetch、lazygit 等应用配置。其中 `config/hypr/`（Win11 风格 hyprlock 锁屏）是**可选项**，只在需要它的机器上启用（`setup.sh` 会询问，或用 `WITH_HYPR=1` 强制启用）。
 - `pi/`：部署到 `$HOME/.pi`，包含 pi coding agent 的配置（`settings.json`、`mcp.json`、`open-tui.json`、`AGENTS.md`、`extensions/*.ts`、`npm/package.json`）。运行时数据与主机专属文件（`models.json`、`auth.json`、`trust.json`、`sessions/`、`skills/` 等）通过 `pi/.gitignore` 排除。
 - `patches/`：针对**外部安装**组件（例如 noctalia-shell 的 clipper 插件）的补丁与重新应用脚本，**不参与 Stow 部署**。外部组件升级会覆盖其安装目录，升级后重新执行对应脚本即可恢复修改。
+- `paseo-plugins/`：Paseo 本地插件源码（例如 `catppuccin/` 外观主题插件），**不参与 Stow 部署**。用 `paseo plugin install <绝对路径>` 注册到 daemon（注册信息写入 `~/.paseo/config.json`，不在本仓库）。
 - `setup.sh`：新机器 bootstrap 脚本，主要面向 Arch 系发行版，并依赖 `paru`。
 - `home/.tmux/plugins/tpm`：Tmux Plugin Manager 子模块。
 
@@ -63,6 +64,7 @@ nvim --headless '+Lazy! sync' +qa
 - 这个仓库混合使用英文和中文注释；新增仓库级说明优先使用中文，配置文件内部遵循原文件风格。
 - 保持变更范围小，不做无关格式化或大规模重排。
 - 外部组件（Noctalia 插件、AUR 安装的应用等）的本地修改不要放进 `config/<app>/`：`config/` 由 Stow 折叠部署，会与组件自身的运行时数据目录冲突。这类修改放到 `patches/`，并附带可重复执行的脚本。
+- Paseo 主题/扩展通过官方插件机制实现，写入 `paseo-plugins/<name>/`；不要直接改 `/opt/Paseo` 下的安装文件（升级即丢失）。
 
 ## 验证建议
 
@@ -74,6 +76,7 @@ nvim --headless '+Lazy! sync' +qa
 ## 环境假设
 
 - 主要目标环境是 Arch 系 Linux。
+- Paseo 来自 AUR 包 `paseo-bin`：`/usr/bin/paseo` 是 GUI wrapper（启动桌面应用，会把路径参数当作“打开项目”），**连接 daemon 的 CLI 命令必须用 bundled launcher** `/opt/Paseo/resources/bin/paseo`（例如 `plugin install`、`plugin reload`、`reload`、`workspace ls`）。
 - 默认 shell 期望为 fish。
 - 包管理器优先使用 `paru`。
 - 配置通过符号链接部署，不建议直接编辑已部署到 `$HOME` 或 `$HOME/.config` 的目标文件。`pi/` 包含用户自定义扩展（`extensions/*.ts`）与 npm 依赖声明（`npm/package.json`），扩展的 npm 源码产物不纳入仓库。
