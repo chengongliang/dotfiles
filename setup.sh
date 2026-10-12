@@ -69,7 +69,9 @@ OPTIONAL_PACKAGES=(
     # Lock screen（可选项：Win11 风格 hyprlock 锁屏，见 config/hypr/）
     # ttf-wps-fonts 提供 Segoe UI / Segoe UI Semilight / Segoe MDL2 Assets（AUR）
     # noto-fonts-cjk 提供锁屏日期行的中文字形
-    # python 供 config/hypr/scripts/lock.sh 解析 noctalia 当前壁纸
+    # python：旧版 lock.sh 解析 noctalia 壁纸 JSON 用；2026-10-10 起
+    # config/hypr/scripts/lock.sh 改用 `noctalia msg wallpaper-get`，不再必需
+    # （保留安装项以免其他脚本依赖缺失）
     hyprlock
     ttf-wps-fonts
     noto-fonts-cjk

@@ -3,30 +3,33 @@ binds {
     // ────────────── Keybindings ──────────────
     // https://github.com/YaLTeR/niri/wiki/Configuration:-Key-Bindings
 
-    // ─── noctalia-shell keybinds ───
-    // https://docs.noctalia.dev/getting-started/keybinds/
+    // ─── noctalia keybinds ───
+    // 新版（5.x Rust）IPC：https://docs.noctalia.dev/noctalia/ ；命令为 `noctalia msg ...`
 
     // Mod+Shift+ESCAPE                     { show-hotkey-overlay; }
 
     // custom
     Mod+Semicolon hotkey-overlay-title="应用菜单" { spawn "fuzzel"; }
-    Mod+V hotkey-overlay-title="剪贴板历史" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "plugin:clipper" "toggle"; }
+    Mod+V hotkey-overlay-title="剪贴板历史" { spawn-sh "noctalia msg panel-toggle clipboard"; }
     Mod+Shift+Slash hotkey-overlay-title="快捷键提示" {
         show-hotkey-overlay
     }
     Mod+Shift+M hotkey-overlay-title="进程列表" {
         spawn "ghostty" "-e" "btop"
     }
-    ALT+E hotkey-overlay-title="AI助手" {
-        spawn "qs" "-c" "noctalia-shell" "ipc" "call" "plugin:assistant-panel" "toggle"
-    }
+    // ATT+E AI助手：旧版 assistant-panel 是 QML 插件，新版（Rust）插件体系不同，
+    // 待新版社区有同类插件后按 `noctalia msg plugin <author/plugin:entry> ... <event>` 重新绑定。
+    // ALT+E hotkey-overlay-title="AI助手" {
+    //     spawn "qs" "-c" "noctalia-shell" "ipc" "call" "plugin:assistant-panel" "toggle"
+    // }
     ALT+Shift+X { spawn "sh" "-c" "grim -g \"$(slurp)\" - | wl-copy"; }
     ALT+Shift+S hotkey-overlay-title="选区截图标注" { spawn "sh" "-c" "grim -g \"$(slurp)\" -t ppm - | satty --filename - --fullscreen --copy-command wl-copy"; }
     ALT+Shift+H { spawn "switch-hosts-gui"; }
 
     // ─── Notification Center ───
-    Mod+Shift+N hotkey-overlay-title="通知中心" { spawn-sh "qs -c noctalia-shell ipc call notifications toggleHistory"; }
-    Mod+CTRL+Shift+N hotkey-overlay-title="清空通知" { spawn-sh "qs -c noctalia-shell ipc call notifications clear"; }
+    // 新版没有独立的通知历史面板，通知在控制中心内；清空改调 notification-clear-history。
+    Mod+Shift+N hotkey-overlay-title="通知中心" { spawn-sh "noctalia msg panel-toggle control-center notifications"; }
+    Mod+CTRL+Shift+N hotkey-overlay-title="清空通知历史" { spawn-sh "noctalia msg notification-clear-history"; }
 
     // ─── Tray App Quick Access ───
     CTRL+ALT+W hotkey-overlay-title="微信" { spawn-sh "$HOME/.config/niri/scripts/focus-or-spawn.sh wechat wechat-universal 1280 900"; }
@@ -40,11 +43,11 @@ binds {
     Shift+Alt+Z                         hotkey-overlay-title="SSH to jms" { spawn "ghostty" "-e" "ssh" "jms"; }
     Mod+Shift+Return                    hotkey-overlay-title="Open Terminal: Alacritty" { spawn "alacritty" "-e" "fish"; }
     Mod+Ctrl+Shift+Return               hotkey-overlay-title="Open Terminal: Kitty" { spawn "kitty" "-e" "fish"; }
-    Mod+Space                           hotkey-overlay-title="Open App Launcher: noctalia launcher" { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
+    Mod+Space                           hotkey-overlay-title="Open App Launcher: noctalia launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
     Mod+B                               hotkey-overlay-title="Open Browser: zen-browser" { spawn "zen-browser"; }
     Mod+Shift+B                         hotkey-overlay-title="Open Browser: Brave" { spawn "brave"; }
     Mod+ALT+L                           hotkey-overlay-title="锁屏" { spawn-sh "$HOME/.config/niri/scripts/lock.sh"; }
-    Mod+Shift+Q                        hotkey-overlay-title="Session Menu: noctalia sessionMenu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
+    Mod+Shift+Q                        hotkey-overlay-title="Session Menu: noctalia sessionMenu" { spawn-sh "noctalia msg panel-toggle session"; }
 
     // Please choose your own file manager.
     Mod+E                               hotkey-overlay-title="File Manager: Nautilus" { spawn-sh "$HOME/.config/niri/scripts/focus-or-spawn.sh org.gnome.Nautilus nautilus"; }
@@ -53,23 +56,23 @@ binds {
     // ─── Media Controls ───
     XF86Launch1                        hotkey-overlay-title="切换性能模式" { spawn "asusctl" "profile" "next"; }
     XF86Launch4                        hotkey-overlay-title="切换 Aura 灯效" { spawn "asusctl" "aura" "effect" "--next-mode"; }
-    XF86AudioRaiseVolume                allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call volume increase"; }
-    XF86AudioLowerVolume                allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call volume decrease"; }
-    XF86AudioMute                       allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call volume muteOutput"; }
-    XF86AudioMicMute                    allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call volume muteInput"; }
-    XF86AudioNext                       allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call media next"; }
-    XF86AudioPrev                       allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call media previous"; }
-    XF86AudioPlay                       allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
-    XF86AudioPause                      allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
+    XF86AudioRaiseVolume                allow-when-locked=true { spawn-sh "noctalia msg volume-up"; }
+    XF86AudioLowerVolume                allow-when-locked=true { spawn-sh "noctalia msg volume-down"; }
+    XF86AudioMute                       allow-when-locked=true { spawn-sh "noctalia msg volume-mute"; }
+    XF86AudioMicMute                    allow-when-locked=true { spawn-sh "noctalia msg mic-mute"; }
+    XF86AudioNext                       allow-when-locked=true { spawn-sh "noctalia msg media next"; }
+    XF86AudioPrev                       allow-when-locked=true { spawn-sh "noctalia msg media previous"; }
+    XF86AudioPlay                       allow-when-locked=true { spawn-sh "noctalia msg media toggle"; }
+    XF86AudioPause                      allow-when-locked=true { spawn-sh "noctalia msg media toggle"; }
 
     // Custom media keys (Ctrl+Shift+Alt+Arrow)
-    CTRL+SHIFT+ALT+Right  hotkey-overlay-title="下一曲"  { spawn-sh "qs -c noctalia-shell ipc call media next"; }
-    CTRL+SHIFT+ALT+Left   hotkey-overlay-title="上一曲"  { spawn-sh "qs -c noctalia-shell ipc call media previous"; }
-    CTRL+SHIFT+ALT+Up     hotkey-overlay-title="播放/暂停" { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
+    CTRL+SHIFT+ALT+Right  hotkey-overlay-title="下一曲"  { spawn-sh "noctalia msg media next"; }
+    CTRL+SHIFT+ALT+Left   hotkey-overlay-title="上一曲"  { spawn-sh "noctalia msg media previous"; }
+    CTRL+SHIFT+ALT+Up     hotkey-overlay-title="播放/暂停" { spawn-sh "noctalia msg media toggle"; }
 
     // ─── Brightness Controls ───
-    XF86MonBrightnessUp                 allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call brightness increase"; }
-    XF86MonBrightnessDown               allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call brightness decrease"; }
+    XF86MonBrightnessUp                 allow-when-locked=true { spawn-sh "noctalia msg brightness-up"; }
+    XF86MonBrightnessDown               allow-when-locked=true { spawn-sh "noctalia msg brightness-down"; }
 
     // ─── Window Movement and Focus ───
     Mod+Q                               { close-window; }
