@@ -10,31 +10,21 @@ set -u
 
 TPL="$HOME/.config/hypr/hyprlock.conf"
 OUT="${XDG_RUNTIME_DIR:-/tmp}/hyprlock-live.conf"
-STATE="$HOME/.cache/noctalia/wallpapers.json"
 
 current_wallpaper() {
-    [ -r "$STATE" ] || return 1
-    python3 - "$STATE" <<'PY'
-import json, os, sys
-try:
-    d = json.load(open(sys.argv[1]))
-except Exception:
-    sys.exit(1)
-w = d.get("wallpapers", {}) or {}
-def ok(p):
-    return p and os.path.isfile(p)
-# 1) 优先内置屏；2) 其次任意一块屏；3) 最后兜底默认壁纸
-order = [w.get("eDP-1")] + [v for k, v in w.items() if k != "eDP-1"]
-for entry in order:
-    if not entry:
-        continue
-    for mode in ("dark", "light"):
-        if ok(entry.get(mode)):
-            print(entry[mode]); sys.exit(0)
-if ok(d.get("defaultWallpaper")):
-    print(d["defaultWallpaper"]); sys.exit(0)
-sys.exit(1)
-PY
+    # 新版 noctalia（5.x Rust）：优先按输出查询实际生效的壁纸路径。
+    local wp
+    wp="$(noctalia msg wallpaper-get eDP-1 2>/dev/null || true)"
+    if [ -n "$wp" ] && [ -f "$wp" ]; then
+        printf '%s\n' "$wp"
+        return 0
+    fi
+    wp="$(noctalia msg wallpaper-get 2>/dev/null || true)"
+    if [ -n "$wp" ] && [ -f "$wp" ]; then
+        printf '%s\n' "$wp"
+        return 0
+    fi
+    return 1
 }
 
 WP="$(current_wallpaper || true)"

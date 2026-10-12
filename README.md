@@ -119,10 +119,11 @@ it runs the hyprlock script, everywhere else it falls back to noctalia's own
 lock screen.
 
 The wallpaper follows whatever the noctalia shell is currently using.
-`scripts/lock.sh` reads noctalia's wallpaper state, writes a throwaway runtime
+`scripts/lock.sh` asks noctalia for the current wallpaper
+(`noctalia msg wallpaper-get`), writes a throwaway runtime
 config into `$XDG_RUNTIME_DIR`, and hands that to `hyprlock -c`, so
-`hyprlock.conf` itself stays generic and machine-independent. If the state file
-cannot be read it falls back to the wallpaper bundled with noctalia.
+`hyprlock.conf` itself stays generic and machine-independent. If the query
+fails it falls back to the wallpaper bundled with noctalia.
 
 noctalia's idle `lockCommand` can also point at
 `~/.config/hypr/scripts/lock.sh`; noctalia's own settings are not tracked, so

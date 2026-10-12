@@ -1,7 +1,11 @@
 // ────────────── Startup Applications ──────────────
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Miscellaneous#spawn-sh-at-startup
 
-    spawn-sh-at-startup "qs -c noctalia-shell"
+    // Noctalia 5.x（Rust 重写版，无 Qt 依赖）：CachyOS 官方自 cachyos-niri-noctalia
+    // 1.4.0 起改用新版（/etc/skel 即 spawn-at-startup "noctalia"）。
+    // 2026-10-10 迁移：旧版 noctalia-shell(quickshell/Qt6) 在 Qt 6.11→6.12 升级后
+    // 因 ABI 不匹配渲染崩坏（黑背景/模糊失效），故弃用 qs -c noctalia-shell。
+    spawn-at-startup "noctalia"
     spawn-sh-at-startup "karing"
     // ── 已注释 [2026-09-15] 避免重复的剪贴板监听器 ────────────────────
     // noctalia-shell 已经通过 ~/.config/noctalia/settings.json 的
