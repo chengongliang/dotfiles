@@ -6,13 +6,18 @@
       }
     }
 
-    /* Noctalia: blur everywhere without xray for a better look */
+    /* Noctalia：layer 命名空间在 5.x（Rust 重写版）后改为不带输出后缀，
+       如 noctalia-bar-default、noctalia-attached-panel（旧版为
+       noctalia-<role>-<output>，如 noctalia-background-eDP-1）。
+       新版自身会通过 ext-background-effect-v1 协议请求模糊（niri 26.04 已支持），
+       这里只为 bar / attached-panel 配兜底规则；
+       注意不要匹配 noctalia-panel-click-shield（全屏透明点击层，blur 开销大）。 */
     layer-rule {
-      match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
-      background-effect {
-	blur true
-        xray false
-      }
+        match namespace="^noctalia-(bar-.*|attached-panel)$"
+        background-effect {
+            blur true
+            xray false
+        }
     }
 
     window-rule {
@@ -222,15 +227,34 @@
     // 钉钉透明覆盖层 / toast 载体窗口（title 与 app-id 同名）：
     // 钉钉按 X11 全局坐标定位它，在 niri 下会叠在主窗口上，全局 blur 又把
     // 它渲染成毛玻璃"蒙板"。这里关掉 blur 恢复完全透明（视觉上只剩 toast
-    // 文字小块）、不抢焦点；自动关闭由 dynamic-float.py 处理。
+    // 文字小块）、不抢焦点。
+    // 自动关闭原本由 dynamic-float.py 处理，2026-09-28 起脚本已停用
+    // （排查 @人候选弹窗秒关问题，结论：与脚本无关，见该脚本 RULES 注释）。
     window-rule {
         match app-id=r#"^com\.alibabainc\.dingtalk$"# title=r#"^com\.alibabainc\.dingtalk$"#
         open-floating true
+        // open-focused false 属原始配置；2026-09-28 实验曾怀疑它导致 @人
+        // 弹窗失焦被关，实测放开焦点后弹窗依然秒关（无关），已恢复原设置。
         open-focused false
         background-effect {
             blur false
         }
     }
+
+    // 【实验记录 2026-09-28】钉钉 X11 弹窗（Form，如 @人候选）被 niri/satellite
+    // 在 map 时从钉钉请求的几何改成浮动默认，导致钉钉 hide（一闪而退）。
+    // 实验结论：
+    //   - 不设规则：钉钉 map 240x98+1727+553 → 被改成 240x900+1280+0 → hide
+    //   - fixed 98：尺寸对了但位置仍被换成工作区原点 → hide
+    //   - fixed 372：与钉钉 map 请求一致，位置仍被换（待验证是否仍 hide）
+    // 注意：niri 无法按尺寸匹配，该规则会命中所有名为 Form 的钉钉弹窗。
+    // 排查期间临时停用，待确定方案后再启用。
+    //window-rule {
+    //    match app-id=r#"^com\.alibabainc\.dingtalk$"# title=r#"^Form$"#
+    //    open-floating true
+    //    default-column-width { fixed 240; }
+    //    default-window-height { fixed 372; }
+    //}
 
     // 微信: 固定浮动尺寸
     window-rule {

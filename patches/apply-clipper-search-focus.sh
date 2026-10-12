@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # 给 noctalia-shell 的 clipper 插件打上「按 / 或 f 聚焦搜索框」补丁。
 #
+# ⚠ 2026-10-10 起：本补丁针对旧版 noctalia-shell（v4 QML 插件）已不再适用。
+#   系统已迁移到新版 noctalia 5.x（Rust），它自带剪贴板面板（noctalia msg
+#   panel-toggle clipboard），不再使用 ~/.config/noctalia/plugins/clipper。
+#   保留本脚本仅供回退旧版时使用。
+#
 # 背景：clipper 来自 Noctalia 官方插件源，插件市场会把它下载（并覆盖）到
 # ~/.config/noctalia/plugins/clipper/。插件升级/重装后本地修改会丢失，
 # 重新执行本脚本即可恢复。
