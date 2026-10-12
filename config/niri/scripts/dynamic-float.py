@@ -16,6 +16,7 @@ https://github.com/niri-wm/niri/discussions/1599
 """
 
 import fcntl
+import glob
 import json
 import os
 import re
@@ -80,12 +81,66 @@ RULES = [
     # 直接关闭（钉钉自身几秒后也会销毁它，提前关闭无副作用）。
     # 仅关已知尺寸：1280x900 主覆盖层、220x70 小 toast 条；
     # 同 title 的交互弹窗（表情面板 514x334 等）不关。
-    Rule(
-        [Match(title=r"^com\.alibabainc\.dingtalk$", app_id=r"^com\.alibabainc\.dingtalk$")],
-        close=True,
-        close_sizes=((1280, 900), (220, 70)),
-    ),
+    #
+    # 【临时停用 2026-09-28】疑似误关 @人候选弹窗（title 同名、尺寸疑似
+    # 撞上 220x70 白名单）。先停用自动关闭，依赖下面 log_dingtalk_window
+    # 收集各弹层 title/尺寸特征，确认后再恢复精确白名单。
+    # Rule(
+    #     [Match(title=r"^com\.alibabainc\.dingtalk$", app_id=r"^com\.alibabainc\.dingtalk$")],
+    #     close=True,
+    #     close_sizes=((1280, 900), (220, 70)),
+    # ),
 ]
+
+# 诊断：钉钉相关窗口（主窗口、透明覆盖层、toast、@人候选、表情面板都
+# 共用 com.alibabainc.dingtalk 这个 title/app-id，只能靠尺寸/时序区分）。
+DINGTALK_WINDOW_RE = re.compile(r"alibabainc|dingtalk", re.IGNORECASE)
+DINGTALK_SEEN: dict[int, float] = {}
+
+
+def log_dingtalk_window(window, previous_window) -> None:
+    haystack = f"{window.get('title') or ''} {window.get('app_id') or ''}"
+    if not DINGTALK_WINDOW_RE.search(haystack):
+        return
+    if previous_window is None:
+        DINGTALK_SEEN.setdefault(window["id"], time.monotonic())
+    size = tuple(window.get("layout", {}).get("window_size") or ())
+    if previous_window is not None:
+        previous_size = tuple(
+            previous_window.get("layout", {}).get("window_size") or ()
+        )
+        unchanged = (
+            previous_window.get("title"),
+            previous_size,
+            previous_window.get("is_focused"),
+        ) == (
+            window.get("title"),
+            size,
+            window.get("is_focused"),
+        )
+        if unchanged:
+            return
+    print(
+        f"dingtalk window {window['id']}: "
+        f"title={window.get('title')!r}, app_id={window.get('app_id')!r}, "
+        f"size={size}, floating={window.get('is_floating')}, "
+        f"focused={window.get('is_focused')}",
+        flush=True,
+    )
+
+
+def log_dingtalk_close(window) -> None:
+    haystack = f"{window.get('title') or ''} {window.get('app_id') or ''}"
+    if not DINGTALK_WINDOW_RE.search(haystack):
+        return
+    seen = DINGTALK_SEEN.pop(window["id"], None)
+    lived = f"{time.monotonic() - seen:.2f}s" if seen else "?"
+    print(
+        f"dingtalk window {window['id']} closed after {lived}: "
+        f"title={window.get('title')!r}, "
+        f"size={tuple(window.get('layout', {}).get('window_size') or ())}",
+        flush=True,
+    )
 
 INITIALIZATION_TIMEOUT = 10.0
 PLACEHOLDER_TITLES = {
@@ -95,6 +150,22 @@ PLACEHOLDER_TITLES = {
     "about:blank",
     "about:blank — zen browser",
 }
+
+
+def resolve_niri_socket() -> str | None:
+    """定位 niri IPC socket。
+
+    优先使用 NIRI_SOCKET；systemd 用户服务可能在会话环境导入之前就已启动，
+    而进程环境不会随 manager 环境更新，此时回退到 XDG_RUNTIME_DIR 下
+    最新创建的 niri.*.sock。每次重试都会重新探测。
+    """
+    if path := os.environ.get("NIRI_SOCKET"):
+        return path
+    runtime_dir = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{os.getuid()}"
+    candidates = glob.glob(os.path.join(runtime_dir, "niri.*.sock"))
+    if not candidates:
+        return None
+    return max(candidates, key=os.path.getmtime)
 
 
 def niri_json(*args):
@@ -191,6 +262,7 @@ def apply_rule(window_id: int, rule: Rule) -> None:
 def update_matched(window, windows, *, allow_new: bool = False) -> None:
     now = time.monotonic()
     previous_window = windows.get(window["id"])
+    log_dingtalk_window(window, previous_window)
     deadline = previous_window.get("match_deadline") if previous_window else None
     if previous_window is None and allow_new:
         deadline = now + INITIALIZATION_TIMEOUT
@@ -209,8 +281,9 @@ def update_matched(window, windows, *, allow_new: bool = False) -> None:
         return
 
     window["match_deadline"] = None
+    action = "close" if matched_rule.close else "float"
     print(
-        f"floating window {window['id']}: "
+        f"rule matched ({action}) window {window['id']}: "
         f"title={window.get('title')!r}, app_id={window.get('app_id')!r}",
         flush=True,
     )
@@ -222,8 +295,13 @@ def main() -> None:
         try:
             windows: dict = {}
             snapshot_received = False
+            socket_path = resolve_niri_socket()
+            if socket_path is None:
+                raise RuntimeError(
+                    "NIRI_SOCKET not set and no niri.*.sock found in XDG_RUNTIME_DIR"
+                )
             niri_socket = socket(AF_UNIX)
-            niri_socket.connect(os.environ["NIRI_SOCKET"])
+            niri_socket.connect(socket_path)
             file = niri_socket.makefile("rw")
             _ = file.write('"EventStream"')
             file.flush()
@@ -248,6 +326,8 @@ def main() -> None:
                     )
                     windows[win["id"]] = win
                 elif changed := event.get("WindowClosed"):
+                    if closed := windows.get(changed["id"]):
+                        log_dingtalk_close(closed)
                     windows.pop(changed["id"], None)
                 elif changed := event.get("WindowsDeleted"):
                     # 兼容旧版事件名
