@@ -3,12 +3,8 @@
     "chrome-devtools": {
       "command": "bash",
       "args": [
-        "npx",
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--slim",
-        "--autoConnect",
-        "--no-usage-statistics"
+        "-lc",
+        "npx -y chrome-devtools-mcp@latest --slim --autoConnect --no-usage-statistics"
       ]
     },
     "searchcode": {
