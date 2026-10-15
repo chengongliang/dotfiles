@@ -1,0 +1,283 @@
+#!/usr/bin/env python3
+"""stuck-key-guard — Xwayland 卡键与按键重复风暴自动熔断守护
+
+背景（本地排查记录见 ~/.config/niri/cfg/input.kdl）
+  niri（focus-follows-mouse）+ XWayland 应用（如钉钉）下，焦点切换时键盘的
+  key-release 事件可能丢失，X11 层认为某个键「一直按着」。两种表现：
+    1. 无限粘贴：Ctrl+V 的 release 丢失 → Xwayland 按重复率（默认 25 次/秒）
+       持续发送重复按键 → 内容反复粘贴直至应用弹窗风暴、系统卡死。
+       风暴期间 Xwayland 会以约 25 条/秒的频率打印：
+           Key repeat discarded, Wayland compositor doesn't seem to be
+           processing events fast enough!
+       （日志经 xwayland-satellite 进程转发到 user journal。）
+    2. 幽灵按键：修饰键（尤其 Super）的 release 丢失后在 X11 层持续「按下」，
+       导致后续操作被误判为 Super+X 等组合键（实测 20 分钟内出现 2 次）。
+       这种孤立卡键不一定伴随上面的日志风暴。
+
+工作方式（两个触发源，共享冷却与释放动作）
+  1) 日志风暴监听：持续读取 user journal 事件流，对上述消息做滑动窗口计数，
+     窗口内条数达到阈值（默认 2 秒内 ≥15 条；25/s 的风暴约 0.6 秒即可达到）
+     即判定进入重复风暴（通常此刻正在「无限粘贴」）。
+  2) 卡键轮询：每 2 秒采样 X11 键盘状态，某个键持续处于「按下」超过 20 秒
+     （人类几乎不可能按住这么久，判定为 release 丢失）即触发。
+  两个触发源都会调用 fix-stuck-keys 释放按键：风暴触发时用 --release-all
+  全量清除（重复风暴中状态已乱，宁可清彻底）；轮询触发时只精确释放被判定
+  卡住的键（避免误伤用户当时正在按的其他键）。释放后进入冷却期（默认 5 秒）
+  避免连发。
+
+误报说明
+  普通卡顿时日志只零星出现（几条/秒短脉冲）不会达到阈值；轮询的 20 秒阈值
+  也远大于正常按键时长。即使误触发，动作也只是「松开按键」，无副作用。
+
+用法
+  stuck-key-guard [--window 秒] [--threshold 条数] [--cooldown 秒]
+                  [--poll 秒] [--hold 秒] [--no-key-watch] [--dry-run]
+  默认：--window 2 --threshold 15 --cooldown 5 --poll 2 --hold 20
+"""
+
+import argparse
+import collections
+import fcntl
+import glob
+import os
+import re
+import subprocess
+import sys
+import threading
+import time
+
+MESSAGE = "Key repeat discarded"
+HELPER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fix-stuck-keys")
+LOCK_PATH = "/tmp/stuck-key-guard.lock"
+KEYCODE_RE = re.compile(r"^keycode\s+(\d+)\s+(.+)$")
+
+
+class GuardState:
+    """两个触发源共享的冷却窗口与释放参数。"""
+
+    def __init__(self, cooldown: float, dry_run: bool, display: str | None):
+        self.lock = threading.Lock()
+        self.cooldown = cooldown
+        self.dry_run = dry_run
+        self.display = display
+        self._cooldown_until = 0.0
+
+    def try_claim(self) -> bool:
+        """申请触发释放；处于冷却期时返回 False。"""
+        now = time.monotonic()
+        with self.lock:
+            if now < self._cooldown_until:
+                return False
+            self._cooldown_until = now + self.cooldown
+            return True
+
+
+def detect_display() -> str | None:
+    """定位 X11 显示号。
+
+    systemd 服务环境里通常没有 DISPLAY，回退到扫描 /tmp/.X11-unix 下的
+    socket（X<N> 对应 :N，niri 的 Xwayland 是 :1）。
+    """
+    if display := os.environ.get("DISPLAY"):
+        return display
+    for path in sorted(glob.glob("/tmp/.X11-unix/X*")):
+        number = os.path.basename(path)[1:]
+        if number.isdigit():
+            return f":{number}"
+    return None
+
+
+def run_helper(*args: str, display: str | None, timeout: float = 5.0):
+    env = dict(os.environ)
+    if display:
+        env["DISPLAY"] = display
+    return subprocess.run(
+        [HELPER, *args],
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+        env=env,
+    )
+
+
+def journal_lines():
+    """实时产出 user journal 的消息文本（从当前时刻开始，不重放历史）。"""
+    proc = subprocess.Popen(
+        ["journalctl", "--user", "-f", "-n", "0", "-o", "cat", "--no-pager"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True,
+        errors="replace",
+    )
+    try:
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            yield line.rstrip("\n")
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=2)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+
+
+def do_release(state: GuardState, reason: str, keynames: list[str] | None = None) -> None:
+    """统一的熔断动作：记录现场并释放按键。
+
+    keynames 为 None 时执行全量释放（--release-all，用于风暴场景）；
+    否则只精确释放指定的键名（用于轮询发现的卡键，不干扰其他按下的键）。
+    """
+    stamp = time.strftime("%H:%M:%S")
+    print(f"[{stamp}] {reason}，开始熔断", flush=True)
+    if state.dry_run:
+        print("dry-run：跳过释放动作", flush=True)
+        return
+    try:
+        before = run_helper("--list", display=state.display)
+        held = [
+            line.strip()
+            for line in (before.stdout or "").splitlines()
+            if line.strip().startswith("keycode")
+        ]
+        print(f"  释放前按下的键：{'; '.join(held) if held else '（无）'}", flush=True)
+        if keynames:
+            result = run_helper(*keynames, display=state.display)
+        else:
+            result = run_helper("--release-all", display=state.display)
+        summary = next(
+            (
+                line.strip()
+                for line in (result.stdout or "").splitlines()
+                if line.strip().startswith("✓ 已释放")
+            ),
+            None,
+        )
+        if result.returncode != 0:
+            print(
+                f"  fix-stuck-keys 失败 rc={result.returncode}: "
+                f"{(result.stderr or '').strip()}",
+                flush=True,
+            )
+        else:
+            print(f"  {summary or '已释放按键'}", flush=True)
+            print("  重复应已停止；如仍有异常可手动执行 fix-stuck-keys", flush=True)
+    except Exception as error:
+        print(f"  释放动作失败：{error}", flush=True)
+
+
+def sample_pressed(display: str | None) -> dict[int, str]:
+    """采样 X11 层当前按下的键：{keycode: 键名}。"""
+    result = run_helper("--list", display=display, timeout=4.0)
+    held: dict[int, str] = {}
+    for line in (result.stdout or "").splitlines():
+        match = KEYCODE_RE.match(line.strip())
+        if match:
+            held[int(match.group(1))] = match.group(2)
+    return held
+
+
+def stuck_key_watcher(args, state: GuardState) -> None:
+    """轮询 X11 键盘状态，自动释放持续按住的「幽灵键」。"""
+    held_since: dict[int, float] = {}
+    while True:
+        time.sleep(args.poll)
+        try:
+            pressed = sample_pressed(state.display)
+        except Exception as error:
+            print(f"按键采样失败：{error}", flush=True)
+            held_since.clear()
+            continue
+        now = time.monotonic()
+        for keycode in pressed:
+            held_since.setdefault(keycode, now)
+        for keycode in [kc for kc in held_since if kc not in pressed]:
+            del held_since[keycode]
+        stuck = [
+            (keycode, pressed[keycode], now - since)
+            for keycode, since in sorted(held_since.items())
+            if now - since >= args.hold
+        ]
+        if stuck and state.try_claim():
+            summary = "、".join(
+                f"keycode {kc} {name}（已按住 {duration:.0f}s）"
+                for kc, name, duration in stuck
+            )
+            # 只精确释放被判定卡住的键；出现「未知键」时退回全量释放
+            keynames = [name for _, name, _ in stuck]
+            if any(name == "(未知键)" for name in keynames):
+                keynames = None
+            do_release(
+                state,
+                f"检测到按键持续按住、疑似 release 丢失：{summary}",
+                keynames=keynames,
+            )
+            # 释放后重新计时；若个别键因状态同步延迟仍显示按下，冷却后重试
+            held_since.clear()
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Xwayland 卡键与按键重复风暴自动熔断守护",
+        epilog=__doc__,
+    )
+    parser.add_argument("--window", type=float, default=2.0, help="风暴滑动窗口秒数（默认 2）")
+    parser.add_argument("--threshold", type=int, default=15, help="窗口内触发条数（默认 15）")
+    parser.add_argument("--cooldown", type=float, default=5.0, help="触发后冷却秒数（默认 5）")
+    parser.add_argument("--poll", type=float, default=2.0, help="按键采样间隔秒数（默认 2）")
+    parser.add_argument("--hold", type=float, default=20.0, help="持续按住判定秒数（默认 20）")
+    parser.add_argument("--no-key-watch", action="store_true", help="禁用卡键轮询")
+    parser.add_argument("--dry-run", action="store_true", help="只记录不释放（测试用）")
+    args = parser.parse_args()
+
+    # 单实例锁：避免重复运行多个监听
+    lock = open(LOCK_PATH, "w")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        print("another instance is running, exit", flush=True)
+        sys.exit(0)
+
+    display = detect_display()
+    print(
+        f"stuck-key-guard 启动：window={args.window:g}s threshold={args.threshold} "
+        f"cooldown={args.cooldown:g}s poll={args.poll:g}s hold={args.hold:g}s "
+        f"key_watch={not args.no_key_watch} dry_run={args.dry_run} display={display}",
+        flush=True,
+    )
+    state = GuardState(args.cooldown, args.dry_run, display)
+
+    if args.no_key_watch:
+        print("卡键轮询已禁用，仅监听日志风暴", flush=True)
+    elif display is None:
+        print("警告：未发现 X11 显示，禁用卡键轮询（释放动作也无法执行）", flush=True)
+    else:
+        threading.Thread(
+            target=stuck_key_watcher, args=(args, state), daemon=True
+        ).start()
+
+    stamps: collections.deque[float] = collections.deque()
+    while True:
+        try:
+            for line in journal_lines():
+                if MESSAGE not in line:
+                    continue
+                now = time.monotonic()
+                stamps.append(now)
+                while stamps and stamps[0] < now - args.window:
+                    stamps.popleft()
+                if len(stamps) >= args.threshold and state.try_claim():
+                    do_release(
+                        state,
+                        f"检测到按键重复风暴（{args.window:.0f}s 内 {len(stamps)} 条）",
+                    )
+                    stamps.clear()
+        except Exception as error:
+            print(f"event stream error: {error}，5 秒后重试", flush=True)
+            time.sleep(5)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(130)

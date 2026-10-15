@@ -1,0 +1,12 @@
+[Unit]
+Description=stuck key guard (Xwayland 按键重复风暴自动熔断)
+# 脚本自带 journal 事件流断线重试逻辑，无需等待图形会话就绪
+DefaultDependencies=yes
+
+[Service]
+ExecStart=/usr/bin/python3 %h/.local/bin/stuck-key-guard
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,227 @@
+#!/usr/bin/env python3
+"""fix-stuck-keys — 释放 X11/XWayland 下卡住的键盘按键
+
+背景
+  在 Wayland 合成器（niri 等）+ XWayland 应用（钉钉、部分 Qt/Electron 程序）的
+  组合下，键盘的 key-release 事件在某些时机（修饰键在字母键之前松开、按键期间
+  焦点切换等）可能丢失。X11 层于是认为该键「一直按着」，Xwayland 便按重复率
+  （默认 25 次/秒）持续发送按键重复事件，表现为：
+    - 无限粘贴（Ctrl+V 卡住 → 同一个内容被反复粘贴数百次直至应用卡死）
+    - 按键停不下来（某个字符/退格疯狂重复）
+    - 修饰键粘连（后续所有操作都被解释成 Ctrl+X / Super+X）
+
+  发生时机与 focus-follows-mouse 相关（焦点随鼠标切换），本地说明见
+  ~/.config/niri/cfg/input.kdl；2026-10-15 的复发及自动熔断见 stuck-key-guard。
+
+用法
+  fix-stuck-keys                 # 释放常见修饰键
+  fix-stuck-keys ctrl v          # 只释放指定键（别名 ctrl/shift/alt/super/meta，
+                                 # 或任意 keysym 名，如 Control_L、v）
+  fix-stuck-keys --list          # 查看当前哪些键处于按下状态（只读，不改动）
+  fix-stuck-keys --release-all   # 释放 X11 层当前所有按下的键（含字母/数字键），
+                                 # 供 stuck-key-guard 自动熔断调用，也可手动兜底
+
+其它自救方式（无需终端）
+  - 按一下那个卡住的物理键（物理按键的 release 事件会重置状态）
+  - 切换一次窗口焦点（niri: Mod+方向键，或点击其它窗口）
+  - 如果应用已经卡死，关闭并重启该应用
+
+实现：直接经 libX11 / libXtst（ctypes）执行 XQueryKeymap 查询与
+XTestFakeKeyEvent 注入，不依赖 xdotool。
+"""
+
+import ctypes
+import ctypes.util
+import os
+import sys
+import time
+
+MODIFIER_KEYSYMS = [
+    "Control_L",
+    "Control_R",
+    "Shift_L",
+    "Shift_R",
+    "Alt_L",
+    "Alt_R",
+    "Super_L",
+    "Super_R",
+    "Meta_L",
+    "Meta_R",
+]
+
+ALIASES = {
+    "ctrl": "Control_L",
+    "shift": "Shift_L",
+    "alt": "Alt_L",
+    "super": "Super_L",
+    "meta": "Super_L",
+}
+
+USAGE = "用法：fix-stuck-keys [--list | --release-all | <键名> ...]"
+
+
+def load_x11():
+    x11_path = ctypes.util.find_library("X11")
+    xtst_path = ctypes.util.find_library("Xtst")
+    if not x11_path or not xtst_path:
+        sys.exit("错误：需要 libX11 与 libXtst（随 xorg-xwayland / xdotool 等安装）")
+
+    x11 = ctypes.CDLL(x11_path)
+    xtst = ctypes.CDLL(xtst_path)
+
+    x11.XOpenDisplay.restype = ctypes.c_void_p
+    x11.XOpenDisplay.argtypes = [ctypes.c_char_p]
+    x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
+    x11.XFlush.argtypes = [ctypes.c_void_p]
+    x11.XQueryKeymap.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_char)]
+    x11.XStringToKeysym.restype = ctypes.c_ulong
+    x11.XStringToKeysym.argtypes = [ctypes.c_char_p]
+    x11.XKeysymToKeycode.restype = ctypes.c_ubyte
+    x11.XKeysymToKeycode.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
+    x11.XkbKeycodeToKeysym.restype = ctypes.c_ulong
+    x11.XkbKeycodeToKeysym.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_ubyte,
+        ctypes.c_int,
+        ctypes.c_int,
+    ]
+    x11.XKeysymToString.restype = ctypes.c_char_p
+    x11.XKeysymToString.argtypes = [ctypes.c_ulong]
+
+    xtst.XTestFakeKeyEvent.restype = ctypes.c_int
+    xtst.XTestFakeKeyEvent.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_uint,
+        ctypes.c_int,
+        ctypes.c_ulong,
+    ]
+    return x11, xtst
+
+
+def pressed_keycodes(x11, dpy) -> list[int]:
+    keys = (ctypes.c_char * 32)()
+    x11.XQueryKeymap(dpy, keys)
+    data = bytes(keys)
+    return [kc for kc in range(256) if data[kc // 8] & (1 << (kc % 8))]
+
+
+def keycode_name(x11, dpy, keycode: int) -> str:
+    keysym = x11.XkbKeycodeToKeysym(dpy, keycode, 0, 0)
+    if keysym:
+        name = x11.XKeysymToString(keysym)
+        if name:
+            return name.decode()
+    return "(未知键)"
+
+
+def modifier_keycodes(x11, dpy) -> set[int]:
+    codes: set[int] = set()
+    for name in MODIFIER_KEYSYMS:
+        keysym = x11.XStringToKeysym(name.encode())
+        if keysym:
+            keycode = x11.XKeysymToKeycode(dpy, keysym)
+            if keycode:
+                codes.add(keycode)
+    return codes
+
+
+def keysym_to_keycode(x11, dpy, name: str) -> int | None:
+    keysym = x11.XStringToKeysym(ALIASES.get(name.lower(), name).encode())
+    if not keysym:
+        return None
+    return x11.XKeysymToKeycode(dpy, keysym) or None
+
+
+def show_pressed(x11, dpy) -> list[str]:
+    pressed = pressed_keycodes(x11, dpy)
+    if not pressed:
+        print("  （没有按键处于按下状态）")
+        return []
+    lines = []
+    for keycode in pressed:
+        line = f"  keycode {keycode:3d}  {keycode_name(x11, dpy, keycode)}"
+        print(line)
+        lines.append(line.strip())
+    return lines
+
+
+def release_keycodes(x11, xtst, dpy, keycodes: list[int], modifiers: set[int]) -> None:
+    # 先释放普通键再释放修饰键，避免释放过程中处在「修饰键+普通键」的
+    # 中间组合状态、误触发额外快捷键。
+    ordered = sorted(set(keycodes), key=lambda kc: (kc in modifiers, kc))
+    for keycode in ordered:
+        xtst.XTestFakeKeyEvent(dpy, keycode, 0, 0)  # 0 = release
+    x11.XFlush(dpy)
+    # XTest 注入的 release 同步到 Xwayland 的内部状态有延迟（实测 0.2s 时
+    # 查询仍是「按下」，1s 后已干净），轮询确认后再让调用方查询/输出。
+    target = set(ordered)
+    deadline = time.monotonic() + 2.0
+    while time.monotonic() < deadline:
+        time.sleep(0.3)
+        if not (set(pressed_keycodes(x11, dpy)) & target):
+            return
+
+
+def main() -> None:
+    args = sys.argv[1:]
+    if any(a in ("-h", "--help") for a in args):
+        print(__doc__)
+        return
+
+    mode = "release-modifiers"
+    names: list[str] = []
+    for arg in args:
+        if arg in ("-l", "--list"):
+            mode = "list"
+        elif arg == "--release-all":
+            mode = "release-all"
+        else:
+            names.append(arg)
+
+    x11, xtst = load_x11()
+    dpy = x11.XOpenDisplay(None)
+    if not dpy:
+        sys.exit("错误：无法连接 X 显示（检查 DISPLAY 环境变量）")
+
+    try:
+        if mode == "list":
+            print("当前 X11 层处于「按下」状态的按键：")
+            show_pressed(x11, dpy)
+            return
+
+        modifiers = modifier_keycodes(x11, dpy)
+        if mode == "release-all":
+            targets = pressed_keycodes(x11, dpy)
+            label = "全部按下的键"
+        elif names:
+            targets = []
+            for name in names:
+                keycode = keysym_to_keycode(x11, dpy, name)
+                if keycode is None:
+                    print(f"警告：无法解析键名 {name!r}，跳过", file=sys.stderr)
+                    continue
+                targets.append(keycode)
+            label = " ".join(names)
+        else:
+            targets = sorted(modifiers)
+            label = "常见修饰键"
+
+        print("释放前：")
+        show_pressed(x11, dpy)
+        release_keycodes(x11, xtst, dpy, targets, modifiers)
+        print("释放后：")
+        show_pressed(x11, dpy)
+
+        released = [keycode_name(x11, dpy, kc) for kc in sorted(set(targets))]
+        print()
+        print(f"✓ 已释放（{label}）：{'、'.join(released) if released else '（无）'}")
+        print("  若仍有键卡住，请按一下该键的物理按键，或切换一次窗口焦点。")
+    finally:
+        x11.XCloseDisplay(dpy)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(130)

@@ -8,10 +8,13 @@ onboarding = false
 #       会写在同一目录，已在仓库 .gitignore 中排除，勿提交。
 
 # ── 主题 ──────────────────────────────────────────────
-# 跟随系统明暗切换，与 Zed 的 Catppuccin Latte / Mocha 对齐
+# 固定 Catppuccin Mocha，与 Zed / Neovim 对齐。
+# 勿开 auto_switch：kitty / ghostty 会把「系统外观」当作终端明暗上报，
+# 深色终端背景下会被切到 Latte，出现白底刺眼的问题。
 [theme]
 name = "catppuccin"                 # 深色基准（Mocha 系）
-auto_switch = true                  # 跟随终端上报的明暗变化自动切换
+auto_switch = false                 # 固定深色，不跟随终端上报的明暗变化
+# 以下两项仅在 auto_switch = true 时生效，保留备用
 light_name = "catppuccin-latte"
 dark_name = "catppuccin"
 
@@ -56,9 +59,17 @@ description = "lazygit"
 
 # ── 界面 / 侧边栏 ─────────────────────────────────────
 [ui]
+prompt_new_tab_name = false
 sidebar_collapsed_mode = "compact"
 agent_panel_sort = "priority"               # 按注意力排序：blocked→done→working→idle
 show_agent_labels_on_pane_borders = true    # 无手动标签时在面板边框显示 agent 名
+
+[ui.sidebar.agents]
+row_gap = 1
+rows = [
+  ["state_icon", "tab"],
+  ["agent", "state_text"],
+]
 
 # 桌面通知：agent 完成或需要输入时弹系统通知
 # Linux 走 notify-send，路由到 noctalia 通知中心（需 WAYLAND_DISPLAY，已具备）
