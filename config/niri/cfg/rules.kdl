@@ -297,8 +297,21 @@
         match app-id="codex"
         default-column-width { proportion 1.0; }
     }
-    // Orca: 服务启动时默认 100% 窗口宽度
+    // Paseo: 服务启动时默认 100% 窗口宽度
     window-rule {
-        match app-id="orca"
+        match app-id="Paseo"
         default-column-width { proportion 1.0; }
+    }
+
+    // magpie quick panel（点托盘图标弹出的面板）放在右下角。
+    // magpie 自带的 niri 集成（internal/omarchy.NiriPanel）假设 bar 在顶部，
+    // 面板每次打开都会被它搬到“工作区顶部往下 6px”（magpie#1670），覆盖
+    // 这里的定位。因此要让 magpie 不接管面板位置：
+    //   1. patches/apply-magpie-no-niri-panel.sh：改二进制里的 NIRI_SOCKET，
+    //      对所有启动方式生效（magpie 自更新/升级后会失效，需重跑）
+    //   2. ~/.config/autostart/magpie.desktop：启动时去掉 NIRI_SOCKET（兜底）
+    window-rule {
+        match app-id="magpie" title="magpie panel"
+        open-floating true
+        default-floating-position x=6 y=6 relative-to="bottom-right"
     }

@@ -50,7 +50,3 @@ set -gx DOCKER_HOST "unix://$XDG_RUNTIME_DIR/docker.sock"
 
 # zoxide
 zoxide init fish | source
-
-# >>> grok installer >>>
-fish_add_path $HOME/.grok/bin
-# <<< grok installer <<<
