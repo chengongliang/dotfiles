@@ -1,0 +1,12 @@
+[Unit]
+Description=niri auto stack（alacritty 新窗口自动并入相邻同类终端列）
+# 脚本自带事件流断线重试逻辑，无需等待图形会话就绪
+DefaultDependencies=yes
+
+[Service]
+ExecStart=/usr/bin/python3 %h/.config/niri/scripts/auto-stack.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
