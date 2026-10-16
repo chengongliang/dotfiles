@@ -20,3 +20,7 @@
     // 改由 systemd 用户服务管理（Restart=always 防止进程悄悄死掉）：
     // systemctl --user enable --now dynamic-float.service
     // spawn-sh-at-startup "python3 ~/.config/niri/scripts/dynamic-float.py >>/tmp/niri-dynamic-float.log 2>&1"
+    // alacritty 自动堆叠：新开的 alacritty 自动并入相邻的同类终端列（niri 本身
+    // 没法把新窗口直接开进已有列，见 scripts/auto-stack.py 头部说明）。
+    // 同样由 systemd 用户服务管理，不在这里 spawn：
+    // systemctl --user enable --now niri-auto-stack.service
