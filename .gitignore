@@ -35,6 +35,9 @@ config/micro/backups/
 # Host-specific niri display layout (outputs/positions vary by machine)
 config/niri/cfg/display.kdl
 
+# Host-specific app settings（含私有模型/网关名单，由本地维护）
+config/zed/settings.json
+
 # Herdr runtime files (logs, sockets, session state written into the config dir).
 # Only config.toml is tracked; everything else herdr writes here is ignored.
 config/herdr/*
