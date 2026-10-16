@@ -112,7 +112,7 @@
     // 	}
     // }
     // Dropdown terminal 改用 kitty quick-access-terminal（layer-shell 面板），见 keybinds.kdl 的 Mod+Grave
-    // ghostty 默认宽度见文末 0.8 规则（覆盖全局 0.8 同值，保留显式声明）
+    // ghostty 默认宽度见文末 0.5 规则
 
     // 宽度0.6
     window-rule {
@@ -287,10 +287,10 @@
         exclude title=r#".*[Bb]itwarden.*"#
         default-column-width { proportion 1.0; }
     }
-    // ghostty 宽度 0.8（此前另有 0.5 规则已被本条覆盖，已删除）
+    // ghostty 宽度 0.5
     window-rule {
         match app-id="ghostty"
-        default-column-width { proportion 0.8; }
+        default-column-width { proportion 0.5; }
     }
     // Codex: 当前应用宽度 1.0
     window-rule {
@@ -300,6 +300,11 @@
     // Paseo: 服务启动时默认 100% 窗口宽度
     window-rule {
         match app-id="Paseo"
+        default-column-width { proportion 1.0; }
+    }
+    // Pebrel: 新窗口默认 100% 宽度
+    window-rule {
+        match app-id="pebrel"
         default-column-width { proportion 1.0; }
     }
 
