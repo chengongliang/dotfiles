@@ -98,7 +98,7 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | Zellij | 显式键位配置、strider 文件选择器、session-manager 欢迎屏 |
 | 窗口管理器 | niri |
 | 锁屏 | 可选 hyprlock，仿 Windows 11 锁屏样式；其余机器回退 noctalia |
-| CLI 工具 | btop、bottom、fastfetch、lazygit、yazi、opencode、paru |
+| CLI 工具 | btop、bottom、fastfetch、lazygit、yazi、paru |
 | Git | 全局 Git 配置和 XDG 全局 ignore 文件 |
 
 ### 锁屏
