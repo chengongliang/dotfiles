@@ -35,6 +35,11 @@ binds {
     CTRL+ALT+W hotkey-overlay-title="微信" { spawn-sh "$HOME/.config/niri/scripts/focus-or-spawn.sh wechat wechat-universal 1280 900"; }
     CTRL+ALT+D hotkey-overlay-title="钉钉" { spawn-sh "$HOME/.config/niri/scripts/focus-or-spawn.sh com.alibabainc.dingtalk dingtalk 1280 900"; }
 
+    // ─── AI 快捷对话 ───
+    // Helium --app 模式拉起 DeepSeek 浮窗（右下角 480x720）；再按一次收起/取回，
+    // 收起只是挪到隔壁空 workspace，页面状态和草稿都保留。复用主 profile 登录态。
+    Mod+CTRL+A hotkey-overlay-title="DeepSeek 快速对话（收起/取回）" { spawn-sh "$HOME/.config/niri/scripts/deepseek-popup.sh"; }
+
     // ─── Applications ───
     Mod+F12                             hotkey-overlay-title="重启状态栏" { spawn-sh "$HOME/.config/niri/scripts/restart-noctalia.sh"; }
     Mod+Return                          hotkey-overlay-title="Open Terminal: Ghostty" { spawn "ghostty" "-e" "fish"; }
