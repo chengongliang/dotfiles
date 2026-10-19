@@ -68,7 +68,7 @@ show_agent_labels_on_pane_borders = true    # 无手动标签时在面板边框�
 row_gap = 1
 rows = [
   ["state_icon", "tab"],
-  ["agent", "state_text"],
+  ["agent"],
 ]
 
 # 桌面通知：agent 完成或需要输入时弹系统通知
