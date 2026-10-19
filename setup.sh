@@ -60,7 +60,6 @@ PACKAGES=(
     bottom
     yazi
     niri
-    opencode
     zed
 )
 

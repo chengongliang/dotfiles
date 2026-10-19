@@ -101,7 +101,7 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | Zellij | Explicit keybindings, strider filepicker, session-manager welcome screen |
 | Window manager | niri |
 | Lock screen | optional hyprlock, styled after the Windows 11 lock screen; noctalia fallback elsewhere |
-| CLI tools | btop, bottom, fastfetch, lazygit, yazi, opencode, paru |
+| CLI tools | btop, bottom, fastfetch, lazygit, yazi, paru |
 | Git | Global Git config and XDG global ignore file |
 
 ### Lock screen
