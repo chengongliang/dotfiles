@@ -45,6 +45,14 @@ alias la 'eza -a --color=always --group-directories-first --icons=auto'
 alias ll 'eza -l --color=always --group-directories-first --icons=auto'
 alias lt 'eza -aT --color=always --group-directories-first --icons=auto'
 
+# ─── vim / vi 重定向到 nvim ───
+# 命令级 shim：~/.local/bin/{vim,vi} -> /usr/bin/nvim（Stow 自 home/.local/bin，优先于 /usr/bin）
+# 覆盖 /etc/environment 里系统默认的 EDITOR=vim / VISUAL=vim
+alias vim nvim
+alias vi nvim
+set -gx EDITOR nvim
+set -gx VISUAL nvim
+
 # Docker
 set -gx DOCKER_HOST "unix://$XDG_RUNTIME_DIR/docker.sock"
 
