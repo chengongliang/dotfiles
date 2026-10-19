@@ -320,3 +320,29 @@
         open-floating true
         default-floating-position x=6 y=6 relative-to="bottom-right"
     }
+
+    // DeepSeek 快速对话浮窗（Mod+CTRL+A → scripts/deepseek-popup.sh）。
+    // Helium/Chromium 的 --app 模式会给出形如 chrome-<host>__-<Profile> 的独立
+    // app-id（后缀随 profile 目录名变化），所以只匹配 host 前缀。
+    window-rule {
+        match app-id=r#"^chrome-chat\.deepseek\.com"#
+        open-floating true
+        default-column-width { fixed 480; }
+        default-window-height { fixed 720; }
+
+        // 定位到当前输出右下角。niri 会扣掉状态栏的 exclusive zone，
+        // 所以这里的 24 就是贴边的留白。
+        default-floating-position x=24 y=24 relative-to="bottom-right"
+
+        // 弹窗观感：圆角 + 无边框 + 柔和阴影，去掉平铺窗口那个聚焦环
+        geometry-corner-radius 12
+        clip-to-geometry true
+        border { off; }
+        focus-ring { off; }
+        shadow {
+            on;
+            softness 30;
+            spread 5;
+            color "#00000060";
+        }
+    }
