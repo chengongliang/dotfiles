@@ -1,7 +1,4 @@
-# agent 级设置（默认模型等，主机专属）：从仓库移除，改由本地 ~/.pi/agent/settings.json
-
-# MCP 网关与本地启动路径由主机自行维护
-agent/mcp.json 维护
+# agent 级设置（默认模型等，主机专属），由本地维护
 agent/settings.json
 
 # MCP 网关与本地启动路径由主机自行维护
