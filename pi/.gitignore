@@ -1,6 +1,9 @@
 # agent 级设置（默认模型等，主机专属）：从仓库移除，改由本地 ~/.pi/agent/settings.json 维护
 agent/settings.json
 
+# Herdr 自动安装的集成，由本机工具维护
+agent/extensions/herdr-agent-state.ts
+
 # models.json 由用户本地维护（含私有模型/端点），不入库
 agent/models.json
 
