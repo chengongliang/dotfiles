@@ -8,7 +8,7 @@
     "@juicesharp/rpiv-ask-user-question": "^2.13.9",
     "@juicesharp/rpiv-todo": "^2.13.9",
     "pi-image-tools": "^1.4.0",
-    "pi-mcp-adapter": "^5.3.2",
+    "pi-mcp-adapter": "^5.4.0",
     "pi-open-tui": "^0.3.11",
     "pi-rounded-tools": "^0.1.3"
   }
