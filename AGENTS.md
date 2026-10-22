@@ -4,9 +4,9 @@
 
 这是个人 dotfiles 仓库，使用 Git 和 GNU Stow 管理配置文件。
 
-- `home/`：部署到 `$HOME`，包含 `.gitconfig`、`.npmrc`、`.tmux/` 等。
+- `home/`：部署到 `$HOME`，包含 `.npmrc`、`.tmux/` 等。Git 身份、代理和凭据助手由本地 `~/.gitconfig` 维护，仓库不跟踪。
 - `config/`：部署到 `$HOME/.config`，包含 fish、Neovim、kitty、alacritty、ghostty、niri、fastfetch、lazygit 等应用配置。其中 `config/hypr/`（Win11 风格 hyprlock 锁屏）是**可选项**，只在需要它的机器上启用（`setup.sh` 会询问，或用 `WITH_HYPR=1` 强制启用）。
-- `pi/`：部署到 `$HOME/.pi`，包含 pi coding agent 的配置（`mcp.json`、`open-tui.json`、`AGENTS.md`、`extensions/*.ts`、`npm/package.json`）。运行时数据与主机专属文件（`settings.json`、`models.json`、`auth.json`、`trust.json`、`sessions/`、`skills/` 等）通过 `pi/.gitignore` 排除。`~/.pi/agent/settings.json`、`~/.config/zed/settings.json` 为本地私有文件（含模型/网关名单），仓库不跟踪，新机器需手动准备；2026-10-16 已用 `git filter-repo` 从历史中抹除。
+- `pi/`：部署到 `$HOME/.pi`，包含 pi coding agent 的配置（`open-tui.json`、`AGENTS.md`、`extensions/*.ts`、`npm/package.json`）。运行时数据与主机专属文件（`mcp.json`、`settings.json`、`models.json`、`auth.json`、`trust.json`、`sessions/`、`skills/` 等）通过 `pi/.gitignore` 排除。`~/.pi/agent/mcp.json`、`~/.pi/agent/settings.json`、`~/.config/zed/settings.json` 为本地私有文件（含模型/网关名单），仓库不跟踪，新机器需手动准备；这些文件及 `home/.gitconfig` 已从 Git 历史移除。
 - `patches/`：针对**外部安装**组件（例如 noctalia-shell 的 clipper 插件）的补丁与重新应用脚本，**不参与 Stow 部署**。外部组件升级会覆盖其安装目录，升级后重新执行对应脚本即可恢复修改。
 - `paseo-plugins/`：Paseo 本地插件源码（例如 `catppuccin/` 外观主题插件），**不参与 Stow 部署**。用 `paseo plugin install <绝对路径>` 注册到 daemon（注册信息写入 `~/.paseo/config.json`，不在本仓库）。
 - `setup.sh`：新机器 bootstrap 脚本，主要面向 Arch 系发行版，并依赖 `paru`。
