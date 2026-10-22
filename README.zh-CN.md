@@ -17,7 +17,6 @@ Fish、初始化 Tmux 插件子模块、部署符号链接，并且不会管理�
 ```text
 ~/dotfiles/
 ├── home/          # 部署到 $HOME
-│   ├── .gitconfig
 │   ├── .npmrc
 │   └── .tmux/
 ├── config/        # 部署到 $HOME/.config
@@ -99,7 +98,7 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | 窗口管理器 | niri |
 | 锁屏 | 可选 hyprlock，仿 Windows 11 锁屏样式；其余机器回退 noctalia |
 | CLI 工具 | btop、bottom、fastfetch、lazygit、yazi、paru |
-| Git | 全局 Git 配置和 XDG 全局 ignore 文件 |
+| Git | XDG 全局 ignore 文件（身份与代理配置仅在本地维护） |
 
 ### 锁屏
 
@@ -168,6 +167,10 @@ stow -t ~/.config config
 
 这些文件需要手动迁移或在新机器上重新生成：
 
+- `~/.gitconfig`：Git 身份、凭据助手与代理配置。
+- `~/.pi/agent/mcp.json`：本机 MCP 网关与启动命令。
+- `~/.pi/agent/settings.json`、`~/.config/zed/settings.json`：私有模型设置。
+- `home/`、`pi/` 下现存的本机副本由 Git 忽略；新机器需手动准备这些配置。
 - `~/.ssh/`：SSH key 和主机相关 SSH 配置。
 - `~/.gnupg/`：GPG key 和 trust database。
 - `~/.kube/`：Kubernetes 凭据和集群配置。

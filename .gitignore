@@ -39,6 +39,9 @@ config/niri/cfg/display.kdl
 config/niri/scripts/niri-watchdog.sh
 config/niri/scripts/niri-resume-snapshot.sh
 
+# 本机 Git 身份、凭据助手与代理配置
+home/.gitconfig
+
 # Host-specific app settings（含私有模型/网关名单，由本地维护）
 config/zed/settings.json
 

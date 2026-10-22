@@ -19,7 +19,6 @@ machine-specific files out of the repository.
 ```text
 ~/dotfiles/
 ├── home/          # deployed to $HOME
-│   ├── .gitconfig
 │   ├── .npmrc
 │   └── .tmux/
 ├── config/        # deployed to $HOME/.config
@@ -102,7 +101,7 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | Window manager | niri |
 | Lock screen | optional hyprlock, styled after the Windows 11 lock screen; noctalia fallback elsewhere |
 | CLI tools | btop, bottom, fastfetch, lazygit, yazi, paru |
-| Git | Global Git config and XDG global ignore file |
+| Git | XDG global ignore file (identity/proxy config is local-only) |
 
 ### Lock screen
 
@@ -175,6 +174,10 @@ stow -t ~/.config config
 
 These files are intentionally not tracked:
 
+- `~/.gitconfig`: Git identity, credential helpers, and proxy settings.
+- `~/.pi/agent/mcp.json`: Host-specific MCP gateways and launch commands.
+- `~/.pi/agent/settings.json` and `~/.config/zed/settings.json`: Private model settings.
+- Existing local copies under `home/` or `pi/` are Git-ignored; prepare these files manually on new machines.
 - `~/.ssh/`: SSH keys and host-specific SSH config.
 - `~/.gnupg/`: GPG keys and trust database.
 - `~/.kube/`: Kubernetes credentials and cluster config.
