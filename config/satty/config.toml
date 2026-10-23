@@ -1,0 +1,45 @@
+[general]
+# 标注完成后复制到剪贴板
+copy-command = "wl-copy"
+# 默认保存路径
+output-filename = "~/Pictures/Screenshots/screenshot-%Y%m%d-%H%M%S.png"
+# 全屏模式
+fullscreen = true
+# 标注后复制/保存直接退出
+early-exit = true
+# 默认工具
+initial-tool = "arrow"
+# 标注默认大小/粗细基准：默认 1.0，越小越细越短
+annotation-size-factor = 0.5
+# 线条端点用圆头，视觉上更饱满
+# default-round-caps = true
+# 形状（矩形/椭圆）默认填充
+default-fill-shapes = true
+# 隐藏通知
+disable-notifications = true
+
+[keybinds]
+pointer = "p"
+crop = "c"
+brush = "b"
+line = "i"
+arrow = "z"
+rectangle = "r"
+ellipse = "e"
+text = "t"
+marker = "m"
+blur = "u"
+highlight = "g"
+
+[font]
+family = "Sans"
+style = "Regular"
+
+[color-palette]
+palette = [
+  "#e6194b",
+  "#3cb44b",
+  "#4363d8",
+  "#f58231",
+  "#42d4f4",
+]

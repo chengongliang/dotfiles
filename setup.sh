@@ -61,6 +61,9 @@ PACKAGES=(
     yazi
     niri
     zed
+
+    # Screenshot + annotation（niri ALT+Shift+X 直接复制 / ALT+Shift+S 标注）
+    grim slurp wl-clipboard satty
 )
 
 # 可选包：仅在 WITH_HYPR=1 时安装
