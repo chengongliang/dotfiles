@@ -6,7 +6,8 @@
     // 2026-10-10 迁移：旧版 noctalia-shell(quickshell/Qt6) 在 Qt 6.11→6.12 升级后
     // 因 ABI 不匹配渲染崩坏（黑背景/模糊失效），故弃用 qs -c noctalia-shell。
     spawn-at-startup "noctalia"
-    spawn-sh-at-startup "karing"
+    // ── 已注释 [2026-10-19] 关闭 Karing 开机自启动 ────────────────────
+    // spawn-sh-at-startup "karing"
     // ── 已注释 [2026-09-15] 避免重复的剪贴板监听器 ────────────────────
     // noctalia-shell 已经通过 ~/.config/noctalia/settings.json 的
     // appLauncher.clipboardWatchTextCommand / clipboardWatchImageCommand
