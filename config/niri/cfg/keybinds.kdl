@@ -126,6 +126,9 @@ binds {
     Mod+Shift+K				cooldown-ms=150 { focus-workspace-up; }
     Mod+CTRL+WheelScrollDown            cooldown-ms=150 { move-column-to-workspace-down; }
     Mod+CTRL+WheelScrollUp              cooldown-ms=150 { move-column-to-workspace-up; }
+    // 键盘版：只把当前窗口（不带走整列/tab）移到上/下一个工作区
+    Mod+CTRL+Shift+J                    cooldown-ms=150 { move-window-to-workspace-down; }
+    Mod+CTRL+Shift+K                    cooldown-ms=150 { move-window-to-workspace-up; }
 
     Mod+WheelScrollRight                { focus-column-right; }
     Mod+WheelScrollLeft                 { focus-column-left; }
