@@ -10,7 +10,7 @@ alias zjr 'zellij run --'            # 新 pane 中运行命令：zjr <cmd>
 alias zje 'zellij edit'              # 新 pane 中编辑文件：zje <file>
 
 # ─── fzf 会话切换 ───
-# 对齐 tmux 的 fs 函数：fzf 模糊选择会话后 attach
+# fzf 模糊选择会话后 attach（替代已移除的 tmux fs 函数）
 function zjf --description "fzf 选择并 attach zellij 会话"
     zellij list-sessions --short | fzf --height 20% --layout=reverse --border --prompt='zellij> ' | read -l result
     and zellij attach "$result"

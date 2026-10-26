@@ -46,7 +46,6 @@ PACKAGES=(
     ghostty ghostty-shell-integration ghostty-terminfo
 
     # Multiplexers
-    tmux
     zellij
 
     # Herdr (agent multiplexer, AUR)
@@ -128,11 +127,7 @@ fi
 
 cd "$DOTFILES_DIR"
 
-# --- 6. Submodules ---
-echo -e "${CYAN}Initializing git submodules...${NC}"
-git submodule update --init --recursive
-
-# --- 7. Deploy symlinks ---
+# --- 6. Deploy symlinks ---
 # 若目标位置已存在非符号链接文件/目录（旧配置），stow 会冲突。
 # 备份后替换，避免阻塞部署。
 backup_existing() {
@@ -144,16 +139,11 @@ backup_existing() {
     fi
 }
 
-echo -e "${CYAN}Deploying home dotfiles (.gitconfig, .npmrc, .tmux.conf)...${NC}"
-for f in .gitconfig .npmrc .tmux; do
+echo -e "${CYAN}Deploying home dotfiles (.npmrc, .local/bin)...${NC}"
+for f in .gitconfig .npmrc; do
     backup_existing "$HOME/$f"
 done
-mkdir -p "$HOME/.tmux/plugins"
 stow --no-folding -t "$HOME" home
-
-# Recreate ~/.tmux.conf -> .tmux/.tmux.conf symlink
-backup_existing "$HOME/.tmux.conf"
-ln -sf .tmux/.tmux.conf "$HOME/.tmux.conf"
 
 echo -e "${CYAN}Deploying XDG config (~/.config/)...${NC}"
 # 对 config/ 下的每个 app 目录，备份本地已存在的同名目录/文件；
@@ -174,16 +164,7 @@ echo -e "${CYAN}Deploying pi config (~/.pi/)...${NC}"
 mkdir -p "$HOME/.pi/agent/extensions"
 stow --no-folding -t "$HOME/.pi" pi
 
-# --- 8. Install Tmux plugins via TPM ---
-if command -v tmux &>/dev/null && [ -f "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
-    echo -e "${CYAN}Installing Tmux plugins via TPM...${NC}"
-    # TPM needs a running tmux server to install; start a headless one
-    tmux new-session -d -s __install 2>/dev/null || true
-    "$HOME/.tmux/plugins/tpm/bin/install_plugins" 2>/dev/null || true
-    tmux kill-session -t __install 2>/dev/null || true
-fi
-
-# --- 9. Set default shell to fish ---
+# --- 7. Set default shell to fish ---
 if [[ "$SHELL" != *fish ]]; then
     echo -e "${CYAN}Setting default shell to fish...${NC}"
     chsh -s /usr/bin/fish 2>/dev/null || echo -e "${RED}chsh failed — run manually: chsh -s /usr/bin/fish${NC}"

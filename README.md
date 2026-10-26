@@ -11,8 +11,8 @@ It is mainly designed for Arch-based systems, uses `paru` for package
 installation, and deploys files as symlinks through GNU Stow.
 
 The bootstrap script is intentionally opinionated: it installs packages, sets up
-Fish, initializes the Tmux plugin submodule, deploys symlinks, and leaves private
-machine-specific files out of the repository.
+Fish, deploys symlinks, and leaves private machine-specific files out of the
+repository.
 
 ## Structure
 
@@ -20,7 +20,7 @@ machine-specific files out of the repository.
 ~/dotfiles/
 ├── home/          # deployed to $HOME
 │   ├── .npmrc
-│   └── .tmux/
+│   └── .local/bin/
 ├── config/        # deployed to $HOME/.config
 │   ├── fish/
 │   ├── nvim/
@@ -51,10 +51,9 @@ What the script does:
 - Installs `paru` if it is missing.
 - Installs packages with `paru`.
 - Installs `g`, `lms`, Fish plugins, and `fnm` when missing.
-- Clones the repository and initializes submodules.
+- Clones the repository.
 - Backs up existing non-symlink targets with a `.prestow.<timestamp>` suffix.
 - Deploys `home/` to `$HOME` and `config/` to `$HOME/.config`.
-- Installs Tmux plugins through TPM.
 - Attempts to set Fish as the default shell.
 
 ## Manual Install
@@ -65,12 +64,11 @@ Install the required tools first:
 sudo pacman -S --needed git stow
 ```
 
-Clone and initialize submodules:
+Clone:
 
 ```bash
 git clone git@github.com:chengongliang/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-git submodule update --init --recursive
 ```
 
 Preview the symlink plan:
@@ -86,7 +84,6 @@ Deploy:
 cd ~/dotfiles
 stow -t ~ home
 stow -t ~/.config config
-ln -sf .tmux/.tmux.conf ~/.tmux.conf
 ```
 
 ## What's Included
@@ -96,7 +93,6 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | Shell | Fish, Fisher plugins, `fnm`, `g`, `zoxide`, `fzf` |
 | Editors | Neovim, micro, Zed |
 | Terminals | Kitty, Alacritty, Ghostty |
-| Tmux | TPM, Dracula theme, resurrect/continuum |
 | Zellij | Explicit keybindings, strider filepicker, session-manager welcome screen |
 | Window manager | niri |
 | Lock screen | optional hyprlock, styled after the Windows 11 lock screen; noctalia fallback elsewhere |
@@ -187,7 +183,6 @@ These files are intentionally not tracked:
 
 ```bash
 cd ~/dotfiles && stow --delete -t ~ home && stow --delete -t ~/.config config
-rm -f ~/.tmux.conf
 ```
 
 Review any `.prestow.<timestamp>` backups before deleting them.

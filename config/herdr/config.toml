@@ -34,13 +34,13 @@ directory = "~/.herdr/worktrees"
 version_check = false
 
 # ── 键位 ──────────────────────────────────────────────
-# 保留 tmux 风格 prefix（ctrl+b，与本机 tmux 一致），在高频操作上再叠加
+# 保留 tmux 风格 prefix（ctrl+b，与 zellij 的 tmux 模式一致），在高频操作上再叠加
 # ctrl+alt 直连键（免 prefix）。ctrl+alt 家族在终端/OS 里几乎不冲突，但要
 # 避开 niri 已占用的 ctrl+alt+w(微信) 与 ctrl+alt+d(钉钉)——下面均未使用。
 [keys]
 prefix = "ctrl+b"
 
-# 面板间移动（最高频，直连免 prefix；vi 方向键，与 tmux 一致）
+# 面板间移动（最高频，直连免 prefix；vi 方向键，与 zellij 一致）
 focus_pane_left  = ["prefix+h", "ctrl+alt+h"]
 focus_pane_down  = ["prefix+j", "ctrl+alt+j"]
 focus_pane_up    = ["prefix+k", "ctrl+alt+k"]

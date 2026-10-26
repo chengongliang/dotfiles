@@ -10,7 +10,7 @@
 包安装默认使用 `paru`，配置文件通过 GNU Stow 以符号链接方式部署。
 
 `setup.sh` 是一个偏个人习惯的新机器 bootstrap 脚本：它会安装软件包、配置
-Fish、初始化 Tmux 插件子模块、部署符号链接，并且不会管理机器私有文件。
+Fish、部署符号链接，并且不会管理机器私有文件。
 
 ## 目录结构
 
@@ -18,7 +18,7 @@ Fish、初始化 Tmux 插件子模块、部署符号链接，并且不会管理�
 ~/dotfiles/
 ├── home/          # 部署到 $HOME
 │   ├── .npmrc
-│   └── .tmux/
+│   └── .local/bin/
 ├── config/        # 部署到 $HOME/.config
 │   ├── fish/
 │   ├── nvim/
@@ -48,10 +48,9 @@ curl -fsSL https://raw.githubusercontent.com/chengongliang/dotfiles/main/setup.s
 - 缺少 `paru` 时自动安装。
 - 使用 `paru` 安装软件包。
 - 缺少 `g`、`lms`、Fish 插件、`fnm` 时自动安装。
-- 克隆仓库并初始化子模块。
+- 克隆仓库。
 - 对已有的非符号链接目标创建 `.prestow.<timestamp>` 备份。
 - 将 `home/` 部署到 `$HOME`，将 `config/` 部署到 `$HOME/.config`。
-- 通过 TPM 安装 Tmux 插件。
 - 尝试把默认 shell 设置为 Fish。
 
 ## 手动安装
@@ -62,12 +61,11 @@ curl -fsSL https://raw.githubusercontent.com/chengongliang/dotfiles/main/setup.s
 sudo pacman -S --needed git stow
 ```
 
-克隆仓库并初始化子模块：
+克隆仓库：
 
 ```bash
 git clone git@github.com:chengongliang/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-git submodule update --init --recursive
 ```
 
 预览符号链接计划：
@@ -83,7 +81,6 @@ stow --simulate -t ~/.config config
 cd ~/dotfiles
 stow -t ~ home
 stow -t ~/.config config
-ln -sf .tmux/.tmux.conf ~/.tmux.conf
 ```
 
 ## 包含内容
@@ -93,7 +90,6 @@ ln -sf .tmux/.tmux.conf ~/.tmux.conf
 | Shell | Fish、Fisher 插件、`fnm`、`g`、`zoxide`、`fzf` |
 | 编辑器 | Neovim、micro、Zed |
 | 终端 | Kitty、Alacritty、Ghostty |
-| Tmux | TPM、Dracula theme、resurrect/continuum |
 | Zellij | 显式键位配置、strider 文件选择器、session-manager 欢迎屏 |
 | 窗口管理器 | niri |
 | 锁屏 | 可选 hyprlock，仿 Windows 11 锁屏样式；其余机器回退 noctalia |
@@ -180,7 +176,6 @@ stow -t ~/.config config
 
 ```bash
 cd ~/dotfiles && stow --delete -t ~ home && stow --delete -t ~/.config config
-rm -f ~/.tmux.conf
 ```
 
 删除 `.prestow.<timestamp>` 备份前建议先确认内容。
