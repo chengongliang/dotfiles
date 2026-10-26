@@ -301,6 +301,9 @@
     window-rule {
         match app-id="Paseo"
         default-column-width { proportion 1.0; }
+        // 合成器层面半透明（opacity 与全局 background-effect blur 叠加成毛玻璃）
+        // 0.0 全透明 / 1.0 不透明，Paseo 以长文阅读为主，取 0.85
+        opacity 0.85
     }
     // Pebrel: 新窗口默认 100% 宽度
     window-rule {
