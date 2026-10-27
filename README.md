@@ -171,9 +171,8 @@ stow -t ~/.config config
 These files are intentionally not tracked:
 
 - `~/.gitconfig`: Git identity, credential helpers, and proxy settings.
-- `~/.pi/agent/mcp.json`: Host-specific MCP gateways and launch commands.
-- `~/.pi/agent/settings.json` and `~/.config/zed/settings.json`: Private model settings.
-- Existing local copies under `home/` or `pi/` are Git-ignored; prepare these files manually on new machines.
+- `~/.config/zed/settings.json`: Private model settings.
+- Existing local copies under `home/` are Git-ignored; prepare these files manually on new machines.
 - `~/.ssh/`: SSH keys and host-specific SSH config.
 - `~/.gnupg/`: GPG keys and trust database.
 - `~/.kube/`: Kubernetes credentials and cluster config.

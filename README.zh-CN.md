@@ -164,9 +164,8 @@ stow -t ~/.config config
 这些文件需要手动迁移或在新机器上重新生成：
 
 - `~/.gitconfig`：Git 身份、凭据助手与代理配置。
-- `~/.pi/agent/mcp.json`：本机 MCP 网关与启动命令。
-- `~/.pi/agent/settings.json`、`~/.config/zed/settings.json`：私有模型设置。
-- `home/`、`pi/` 下现存的本机副本由 Git 忽略；新机器需手动准备这些配置。
+- `~/.config/zed/settings.json`：私有模型设置。
+- `home/` 下现存的本机副本由 Git 忽略；新机器需手动准备这些配置。
 - `~/.ssh/`：SSH key 和主机相关 SSH 配置。
 - `~/.gnupg/`：GPG key 和 trust database。
 - `~/.kube/`：Kubernetes 凭据和集群配置。
