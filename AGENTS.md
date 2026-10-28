@@ -53,7 +53,6 @@ nvim --headless '+Lazy! sync' +qa
 - 这个仓库混合使用英文和中文注释；新增仓库级说明优先使用中文，配置文件内部遵循原文件风格。
 - 保持变更范围小，不做无关格式化或大规模重排。
 - 外部组件（Noctalia 插件、AUR 安装的应用等）的本地修改不要放进 `config/<app>/`：`config/` 由 Stow 折叠部署，会与组件自身的运行时数据目录冲突。这类修改放到 `patches/`，并附带可重复执行的脚本。
-- Paseo 主题/扩展不在本仓库维护：通过官方插件机制安装到仓库外，不要直接改 `/opt/Paseo` 下的安装文件（升级即丢失）。
 
 ## 验证建议
 
@@ -65,7 +64,6 @@ nvim --headless '+Lazy! sync' +qa
 ## 环境假设
 
 - 主要目标环境是 Arch 系 Linux。
-- Paseo 来自 AUR 包 `paseo-bin`：`/usr/bin/paseo` 是 GUI wrapper（启动桌面应用，会把路径参数当作“打开项目”），**连接 daemon 的 CLI 命令必须用 bundled launcher** `/opt/Paseo/resources/bin/paseo`（例如 `plugin install`、`plugin reload`、`reload`、`workspace ls`）。
 - 默认 shell 期望为 fish。
 - 包管理器优先使用 `paru`。
 - 配置通过符号链接部署，不建议直接编辑已部署到 `$HOME` 或 `$HOME/.config` 的目标文件。
