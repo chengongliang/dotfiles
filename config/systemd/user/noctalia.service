@@ -1,0 +1,33 @@
+[Unit]
+Description=Noctalia desktop shell（顶栏 / 壁纸 / 桌面层）
+Documentation=https://docs.noctalia.dev/noctalia/
+# 起因：2026-10-28 10:29 systemd-oomd 因内存超限，把 noctalia 连同 2619 个子进程
+# 一并枪毙（6d18h 运行，15.4G 内存峰值 / 11.9G swap 峰值）。它当时是 niri 的
+# spawn-at-startup 裸启动进程，崩了没有任何自愈，niri 只剩纯色背景 → 桌面消失。
+# 改为 systemd 用户服务管理，与 dynamic-float / niri-auto-stack / stuck-key-guard 一致。
+After=niri.service
+Wants=niri.service
+# niri 重启（或会话结束）时，本服务一并停止
+PartOf=niri.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/noctalia
+Restart=always
+RestartSec=3
+
+# ── 内存护栏 ──────────────────────────────────────────────────────────
+# 实测正常驻留约 130 MB；但 6 天连续运行可累积到 15.4G（约 2.3G/天，存在泄漏）。
+# MemoryHigh：达到后由内核开始回收/限流，不杀进程，可能短暂卡顿。
+# MemoryMax ：达到后本 cgroup 被 SIGKILL，Restart=always 在 3 秒后干净拉起，
+#             只影响桌面壳自身，不会像 oomd 那样波及整个会话。
+# 若后续定位并修掉泄漏，可放宽或删除这两行。
+MemoryAccounting=yes
+MemoryHigh=2G
+MemoryMax=4G
+
+# 泄漏到硬上限被内核杀时，不让 systemd 把这次退出当作崩溃上报给 oomd 全局评分
+ManagedOOMMemoryPressure=auto
+
+[Install]
+WantedBy=graphical-session.target

@@ -5,7 +5,14 @@
     // 1.4.0 起改用新版（/etc/skel 即 spawn-at-startup "noctalia"）。
     // 2026-10-10 迁移：旧版 noctalia-shell(quickshell/Qt6) 在 Qt 6.11→6.12 升级后
     // 因 ABI 不匹配渲染崩坏（黑背景/模糊失效），故弃用 qs -c noctalia-shell。
-    spawn-at-startup "noctalia"
+    // ── 已迁移 [2026-10-28] 改由 systemd 用户服务管理 ──────────────────
+    // 起因：2026-10-28 10:29 noctalia 累积到 15.4G 内存 / 11.9G swap（2619 进程），
+    // 被 systemd-oomd 整组枪毙。而 spawn-at-startup 裸启动没有任何自愈能力，
+    // 进程一死 niri 就只剩纯色背景 —— 表现为「桌面突然不见了」。
+    // 现在由 noctalia.service 托管（Restart=always + MemoryHigh/MemoryMax 护栏）：
+    //   systemctl --user enable --now noctalia.service
+    // 服务定义见 ~/.config/systemd/user/noctalia.service
+    // spawn-at-startup "noctalia"
     // ── 已注释 [2026-10-19] 关闭 Karing 开机自启动 ────────────────────
     // spawn-sh-at-startup "karing"
     // ── 已注释 [2026-09-15] 避免重复的剪贴板监听器 ────────────────────
