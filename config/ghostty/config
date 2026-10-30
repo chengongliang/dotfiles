@@ -19,9 +19,17 @@ window-decoration = true
 fullscreen = false
 async-backend = epoll
 
-# 分屏快捷键
+# 快捷键（与 kitty/kitty.conf 的 Keybindings 保持一致）
+keybind = alt+t=new_tab
+keybind = alt+w=close_tab
+
+# 分屏：kitty 的 vsplit/hsplit 对应 right/down
+keybind = alt+enter=new_split:right
+keybind = alt+shift+enter=new_split:down
+keybind = alt+q=close_surface
+
+# 额外保留的旧分屏快捷键
 keybind = alt+shift+minus=new_split:down
 keybind = alt+shift+equal=new_split:right
-keybind = alt+w=close_surface
 
 custom-shader = ~/.config/ghostty/shaders/shader.glsl
