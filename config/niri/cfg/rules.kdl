@@ -311,6 +311,20 @@
         default-column-width { proportion 1.0; }
     }
 
+    // magpie 主窗口（app-id 与 title 都是 "magpie"）：浮动，落在工作区右下角。
+    // 尺寸取主屏（DP-3 1920x1054 工作区）上常用的 927x875 折算成比例，
+    // 这样换到笔记本屏（eDP-1 1280x774）也不会撑出工作区，同时保持
+    // 和当前一致的观感。位置 x=19 y=19 相对工作区右下角。
+    // 注意 title 是正则且未锚定时 "magpie" 会同时命中下面的 "magpie panel"，
+    // 因此两条规则都用 ^...$ 锚点。
+    window-rule {
+        match app-id=r#"^magpie$"# title=r#"^magpie$"#
+        open-floating true
+        default-column-width { proportion 0.483; }
+        default-window-height { proportion 0.830; }
+        default-floating-position x=19 y=19 relative-to="bottom-right"
+    }
+
     // magpie quick panel（点托盘图标弹出的面板）放在右下角。
     // magpie 自带的 niri 集成（internal/omarchy.NiriPanel）假设 bar 在顶部，
     // 面板每次打开都会被它搬到“工作区顶部往下 6px”（magpie#1670），覆盖
@@ -319,7 +333,7 @@
     //      对所有启动方式生效（magpie 自更新/升级后会失效，需重跑）
     //   2. ~/.config/autostart/magpie.desktop：启动时去掉 NIRI_SOCKET（兜底）
     window-rule {
-        match app-id="magpie" title="magpie panel"
+        match app-id=r#"^magpie$"# title=r#"^magpie panel$"#
         open-floating true
         default-floating-position x=6 y=6 relative-to="bottom-right"
     }
