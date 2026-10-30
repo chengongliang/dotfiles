@@ -9,9 +9,22 @@
     // 起因：2026-10-28 10:29 noctalia 累积到 15.4G 内存 / 11.9G swap（2619 进程），
     // 被 systemd-oomd 整组枪毙。而 spawn-at-startup 裸启动没有任何自愈能力，
     // 进程一死 niri 就只剩纯色背景 —— 表现为「桌面突然不见了」。
-    // 现在由 noctalia.service 托管（Restart=always + MemoryHigh/MemoryMax 护栏）：
+    // 现在由 noctalia.service 托管（Restart=always + MemoryHigh=2G/MemoryMax=4G）：
     //   systemctl --user enable --now noctalia.service
-    // 服务定义见 ~/.config/systemd/user/noctalia.service
+    //   WantedBy=graphical-session.target（由 niri.service 激活，BindsTo 之）
+    // 服务定义在 dotfiles/config/systemd/user/noctalia.service，
+    // 经 setup.sh 的 stow 链到 ~/.config/systemd/user/（相对链接，勿手建绝对链接，
+    // 绝对链接 stow 不认 → 会判冲突并整体中止部署）。
+    //
+    // ⚠ [2026-10-30] 排查记录：本注释曾长期与事实不符 —— service 文件虽已写好，
+    // 但 stow 因两处冲突（satty/config.toml 本地真文件、herdr/config.toml 绝对
+    // 链接）整体 abort，noctalia.service 从未被链接，开机也就从没被拉起过；
+    // 当时在跑的实例是手动 restart 脚本以 setsid 启动的，cgroup 落在触发它的
+    // 终端 scope（app-niri-ghostty-*.scope）里，关掉那个窗口会连带杀掉状态栏。
+    // 2026-10-30 已清理两处冲突、重新 stow、enable 服务并验证 cgroup 独立。
+    //
+    // 重启用 Mod+F12 → scripts/restart-noctalia.sh（内部走 systemctl restart）。
+    // 若服务失联，先查：systemctl --user status noctalia.service
     // spawn-at-startup "noctalia"
     // ── 已注释 [2026-10-19] 关闭 Karing 开机自启动 ────────────────────
     // spawn-sh-at-startup "karing"
@@ -32,3 +45,11 @@
     // 没法把新窗口直接开进已有列，见 scripts/auto-stack.py 头部说明）。
     // 同样由 systemd 用户服务管理，不在这里 spawn：
     // systemctl --user enable --now niri-auto-stack.service
+    // [2026-10-30] 已启用（enabled + active）。此前一直未生效的原因与 noctalia
+    // 同源：setup.sh 的 stow 阶段因冲突整体 abort，service 没被链接。
+
+    // 按键重复风暴熔断（Xwayland）：默认由 ~/.local/bin/stuck-key-guard 看护，
+    // 防止卡键导致按键事件刷屏。不在 niri 里 spawn，由 systemd 用户在
+    // default.target 拉起：
+    // systemctl --user enable --now stuck-key-guard.service
+    // [2026-10-30] 已启用（enabled + active）。
