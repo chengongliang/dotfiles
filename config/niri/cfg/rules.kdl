@@ -73,6 +73,13 @@
         }
     }
 
+    // 
+    window-rule {
+        match app-id="lobehub|marktext"
+        default-column-width { proportion 1.0; }
+        opacity 0.85
+    }
+
     // if you use steam you will probably like these
     window-rule {
         match app-id="steam"
@@ -286,6 +293,7 @@
         match app-id="zen"
         exclude title=r#".*[Bb]itwarden.*"#
         default-column-width { proportion 1.0; }
+        opacity 0.9
     }
     // ghostty 宽度 0.5
     window-rule {
