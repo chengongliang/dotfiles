@@ -242,6 +242,8 @@ def main() -> None:
                 raise RuntimeError(
                     "NIRI_SOCKET not set and no niri.*.sock found in XDG_RUNTIME_DIR"
                 )
+            # systemd 启动的服务环境里没有 NIRI_SOCKET，导出给 niri msg 子进程
+            os.environ["NIRI_SOCKET"] = socket_path
             niri_socket = socket(AF_UNIX)
             niri_socket.connect(socket_path)
             file = niri_socket.makefile("rw")
